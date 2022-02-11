@@ -15,6 +15,7 @@ public enum Horarios {
 	DEZESSETE(LocalTime.of(17, 0));
 
 	private LocalTime horario;
+	private static Horarios[] horarios = Horarios.values();
 	
 	Horarios(LocalTime horario) {
 		this.horario = horario;
@@ -26,5 +27,9 @@ public enum Horarios {
 
 	public void setHorario(LocalTime horario) {
 		this.horario = horario;
+	}
+	
+	public static Horarios[] getHorarios() {
+		return horarios;
 	}
 }

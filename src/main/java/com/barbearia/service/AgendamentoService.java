@@ -49,22 +49,20 @@ public class AgendamentoService {
 	}
 
 	public Agendamento agendar(Agendamento agendamento) {
-		System.out.println(agendamento.getDia());
-		System.out.println(agendamento.getHorario());
+		verificaHorarioCliente(agendamento);
+		verificaHorarioPrestador(agendamento);
 		
-		//return agendamentoRepository.save(agendamento);
 		return null;
 	}
 	
 	private void verificaHorarioCliente(Agendamento agendamento) {
 		if(agendamentoRepository.findHorarioByCliente(agendamento.getCpfCliente(), agendamento.getDia(), agendamento.getHorario()) != null)
-			throw new ApiRequestException("Horário não disponível", HttpStatus.FORBIDDEN);
+			throw new ApiRequestException("Horário não disponível para o cliente.", HttpStatus.FORBIDDEN);
 	}
 
 	private void verificaHorarioPrestador(Agendamento agendamento) {
 		if(agendamentoRepository.findHorarioByPrestador(agendamento.getCpfPrestador(), agendamento.getDia(), agendamento.getHorario()) != null)
-			throw new ApiRequestException("Horário não disponível", HttpStatus.FORBIDDEN);
-		
+			throw new ApiRequestException("Horário não disponível para o prestador.", HttpStatus.FORBIDDEN);
 	}
 
 }

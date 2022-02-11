@@ -43,7 +43,7 @@ public class AgendamentoController {
 		return new ResponseEntity<Agendamento>(agendamentoService.agendar(agendamento), HttpStatus.CREATED);
 	}
 	
-	@DeleteMapping("/deletarTudo")
+	@DeleteMapping("/deletar/todos")
 	public ResponseEntity<String> deletarTudo() {
 		return new ResponseEntity<String>(agendamentoService.deletarTudo(), HttpStatus.ACCEPTED);
 	}

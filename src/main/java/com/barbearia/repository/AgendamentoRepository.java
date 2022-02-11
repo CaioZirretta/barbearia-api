@@ -19,9 +19,9 @@ public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>
 	public List<Agendamento> findByHorario(LocalDate horario); 
 	public void deleteAll();
 	
-	@Query(value="select a from agendamentos a", nativeQuery = true)
+	@Query("SELECT a FROM Agendamento a WHERE a.dia = :dia AND a.horario = :horario AND a.cpfPrestador = :cpfPrestador")
 	public Agendamento findHorarioByPrestador(String cpfPrestador, LocalDate dia, LocalTime horario);
 	
-	@Query(value="select a from agendamentos a", nativeQuery = true)
-	public Agendamento findHorarioByCliente(String cpfPrestador, LocalDate dia, LocalTime horario);
+	@Query("SELECT a FROM Agendamento a WHERE a.dia = :dia and a.horario = :horario and a.cpfCliente = :cpfCliente")
+	public Agendamento findHorarioByCliente(String cpfCliente, LocalDate dia, LocalTime horario);
 }
