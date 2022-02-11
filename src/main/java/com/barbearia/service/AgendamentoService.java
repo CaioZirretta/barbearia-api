@@ -2,14 +2,12 @@ package com.barbearia.service;
 
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.barbearia.model.Agendamento;
 import com.barbearia.repository.AgendamentoRepository;
-import com.barbearia.repository.ClienteRepository;
-import com.barbearia.repository.PrestadorRepository;
 
 @Service
 public class AgendamentoService{
@@ -18,27 +16,32 @@ public class AgendamentoService{
 	private AgendamentoRepository agendamentoRepository;
 	
 	@Autowired
-	private ClienteRepository clienteRepository;
+	private ClienteService clienteService;
 	
 	@Autowired
-	private PrestadorRepository prestadorRepository;
+	private PrestadorService prestadorService;
 	
 	public List<Agendamento> listarTodos() {
 		return agendamentoRepository.findAll();
 	}
 
-	public Agendamento procurarPorCpfCliente() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
+		clienteService.validaCpf(cpfCliente);
+		clienteService.validaSeClienteNaoExiste(cpfCliente);
+		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 
-	public Agendamento procurarPorCpfPrestador() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Agendamento> procurarPorCpfPrestador(String cpfCliente) {
+		prestadorService.validaCpf(cpfCliente);
+		prestadorService.validaSePrestadorNaoExiste(cpfCliente);
+		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 	
 	public String deletarTudo() {
-		return null;
+		JSONObject json = new JSONObject();
+		json.put("message", "Registros apagados");
+		agendamentoRepository.deleteAll();
+		return json.toString();
 	}
 
 	public Agendamento agendar(Agendamento agendamento) {

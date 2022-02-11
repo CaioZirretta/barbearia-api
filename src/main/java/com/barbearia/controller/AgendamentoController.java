@@ -29,13 +29,13 @@ public class AgendamentoController {
 	}
 	
 	@PostMapping("/listar/cliente/{cpf}")
-	public ResponseEntity<Agendamento> procurarPorCpfCliente(@PathVariable String cpf) {
-		return new ResponseEntity<Agendamento>(agendamentoService.procurarPorCpfCliente(), HttpStatus.ACCEPTED);
+	public ResponseEntity<List<Agendamento>> procurarPorCpfCliente(@PathVariable String cpf) {
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfCliente(cpf), HttpStatus.ACCEPTED);
 	}
 	
 	@PostMapping("/listar/prestador/{cpf}")
-	public ResponseEntity<Agendamento> procurarPorCpfPrestador(String cpf) {
-		return new ResponseEntity<Agendamento>(agendamentoService.procurarPorCpfPrestador(), HttpStatus.ACCEPTED);	
+	public ResponseEntity<List<Agendamento>> procurarPorCpfPrestador(@PathVariable String cpf) {
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfPrestador(cpf), HttpStatus.ACCEPTED);	
 	}
 
 	@PostMapping("/agendar")
