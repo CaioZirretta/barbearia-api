@@ -1,8 +1,6 @@
 package com.barbearia.service;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -40,7 +38,7 @@ public class AgendamentoService {
 	public List<Agendamento> procurarPorCpfPrestador(String cpfCliente) {
 		prestadorService.validaCpf(cpfCliente);
 		prestadorService.validaSePrestadorNaoExiste(cpfCliente);
-		return agendamentoRepository.findByCpfCliente(cpfCliente);
+		return agendamentoRepository.findByCpfPrestador(cpfCliente);
 	}
 
 	public String deletarTudo() {
