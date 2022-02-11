@@ -24,4 +24,7 @@ public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>
 	
 	@Query("SELECT a FROM Agendamento a WHERE a.dia = :dia and a.horario = :horario and a.cpfCliente = :cpfCliente")
 	public Agendamento findHorarioByCliente(String cpfCliente, LocalDate dia, LocalTime horario);
+	
+	@Query("SELECT a FROM Agendamento a WHERE a.dia = :dia AND a.cpfCliente = :cpfCliente")
+	public Agendamento findDiaByCliente(String cpfCliente, LocalDate dia);
 }

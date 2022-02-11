@@ -63,18 +63,21 @@ public class AgendamentoService {
 
 	private void verificaHorarioValido(Agendamento agendamento) {
 		if (!Horarios.contains(agendamento.getHorario())) {
-			throw new ApiRequestException("Horário inválido. Horários disponíveis entre 8 e 17", HttpStatus.FORBIDDEN);
+			throw new ApiRequestException("Horário inválido. Horários disponíveis entre 8 e 17.", HttpStatus.FORBIDDEN);
 		}
 	}
 
 	private void verificaDataValida(Agendamento agendamento) {
 		if (agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SATURDAY)
 				|| agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-			throw new ApiRequestException("Data inválida. Sábados e domingos não funcionam", HttpStatus.FORBIDDEN);
+			throw new ApiRequestException("Data inválida. Sábados e domingos não funcionam.", HttpStatus.FORBIDDEN);
 		}
 	}
 
 	private void verificaHorarioCliente(Agendamento agendamento) {
+		if (agendamentoRepository.findDiaByCliente(agendamento.getCpfCliente(), agendamento.getDia()) != null)
+			throw new ApiRequestException("Cliente já possui horário marcado no dia.", HttpStatus.FORBIDDEN);
+
 		if (agendamentoRepository.findHorarioByCliente(agendamento.getCpfCliente(), agendamento.getDia(),
 				agendamento.getHorario()) != null)
 			throw new ApiRequestException("Horário não disponível para o cliente.", HttpStatus.FORBIDDEN);
