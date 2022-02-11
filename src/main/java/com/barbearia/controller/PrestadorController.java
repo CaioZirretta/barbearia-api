@@ -27,7 +27,7 @@ public class PrestadorController {
 	@Autowired
 	private PrestadorService prestadorService;
 	
-	@GetMapping("/listarTodos")
+	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Prestador>> listarTodos(){
 		return prestadorService.listarTodos(); 
 	}
@@ -47,7 +47,7 @@ public class PrestadorController {
 		return prestadorService.detalharPrestador(cpf);
 	}
 	
-	@DeleteMapping("/deletartudo")
+	@DeleteMapping("/deletar/todos")
 	public ResponseEntity<String> deletarTudo(){
 		return prestadorService.deletarTudo();
 	}

@@ -23,17 +23,17 @@ public class AgendamentoController {
 	@Autowired
 	private AgendamentoService agendamentoService;
 
-	@GetMapping("/listarTodos")
+	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Agendamento>> listarTodos() {
 		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarTodos(), HttpStatus.ACCEPTED);
 	}
 	
-	@PostMapping("/listar/cliente/{cpf}")
+	@GetMapping("/listar/cliente/{cpf}")
 	public ResponseEntity<List<Agendamento>> procurarPorCpfCliente(@PathVariable String cpf) {
 		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfCliente(cpf), HttpStatus.ACCEPTED);
 	}
 	
-	@PostMapping("/listar/prestador/{cpf}")
+	@GetMapping("/listar/prestador/{cpf}")
 	public ResponseEntity<List<Agendamento>> procurarPorCpfPrestador(@PathVariable String cpf) {
 		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfPrestador(cpf), HttpStatus.ACCEPTED);	
 	}

@@ -26,7 +26,7 @@ public class ClienteController {
 	@Autowired
 	private ClienteService clienteService;
 	
-	@GetMapping("/listarTodos")
+	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Cliente>> listarTodos(){
 		return clienteService.listarTodos(); 
 	}
