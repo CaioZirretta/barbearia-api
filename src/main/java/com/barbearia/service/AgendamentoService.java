@@ -24,8 +24,7 @@ public class AgendamentoService{
 	private PrestadorRepository prestadorRepository;
 	
 	public List<Agendamento> listarTodos() {
-		// TODO Auto-generated method stub
-		return null;
+		return agendamentoRepository.findAll();
 	}
 
 	public Agendamento procurarPorCpfCliente() {
