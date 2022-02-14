@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ApiExceptionHandler {
 	
-	//E se eu quiser outra Exception?
 	@ExceptionHandler(value = {ApiRequestException.class})
 	public ResponseEntity<Object> handleApiRequestException(ApiRequestException e){
 
