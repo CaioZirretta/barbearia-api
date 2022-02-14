@@ -18,19 +18,19 @@ public class PrestadorService {
 	@Autowired
 	private PrestadorRepository prestadorRepository;
 
-	public ResponseEntity<List<Prestador>> listarTodos() {
-		return new ResponseEntity<List<Prestador>>(prestadorRepository.findAll(), HttpStatus.ACCEPTED);
+	public List<Prestador> listarTodos() {
+		return prestadorRepository.findAll();
 	}
 
-	public ResponseEntity<Prestador> adicionar(Prestador prestador) throws ApiRequestException {
+	public Prestador adicionar(Prestador prestador) throws ApiRequestException {
 		prestador.setCpf(formataCpf(prestador.getCpf()));
 		validaCpf(prestador.getCpf());
 		validaSePrestadorExiste(prestador.getCpf());
 
-		return new ResponseEntity<Prestador>(prestadorRepository.save(prestador), HttpStatus.CREATED);
+		return prestadorRepository.save(prestador);
 	}
 
-	public ResponseEntity<List<Prestador>> adicionarVarios(List<Prestador> prestadores) {
+	public List<Prestador> adicionarVarios(List<Prestador> prestadores) {
 		prestadores.forEach(prestador -> {
 			prestador.setCpf(formataCpf(prestador.getCpf()));
 
@@ -40,25 +40,25 @@ public class PrestadorService {
 			prestadorRepository.save(prestador);
 		});
 
-		return new ResponseEntity<List<Prestador>>(prestadores, HttpStatus.CREATED);
+		return prestadores;
 	}
 
-	public ResponseEntity<Prestador> detalharPrestador(String cpf) {
+	public Prestador detalharPrestador(String cpf) {
 		validaSePrestadorNaoExiste(cpf);
 
-		return new ResponseEntity<Prestador>(prestadorRepository.findByCpf(cpf), HttpStatus.ACCEPTED);
+		return prestadorRepository.findByCpf(cpf);
 	}
 
-	public ResponseEntity<String> deletarTudo() {
+	public String deletarTudo() {
 		JSONObject json = new JSONObject();
 		json.put("message", "Registros apagados");
 
 		prestadorRepository.deleteAll();
 
-		return new ResponseEntity<String>(json.toString(), HttpStatus.ACCEPTED);
+		return json.toString();
 	}
 
-	public ResponseEntity<Prestador> alterarCliente(String cpf, Prestador prestadorAtualizado) {
+	public Prestador alterarCliente(String cpf, Prestador prestadorAtualizado) {
 		cpf = formataCpf(cpf);
 
 		validaCpf(cpf);
@@ -69,7 +69,7 @@ public class PrestadorService {
 		prestador.setCpf(prestadorAtualizado.getCpf());
 		prestador.setNome(prestador.getNome());
 
-		return new ResponseEntity<Prestador>(prestador, HttpStatus.CREATED);
+		return prestador;
 	}
 
 	public void validaCpf(String cpf) {

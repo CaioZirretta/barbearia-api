@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,33 +30,33 @@ public class PrestadorController {
 	
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Prestador>> listarTodos(){
-		return prestadorService.listarTodos(); 
+		return new ResponseEntity<List<Prestador>>(prestadorService.listarTodos(), HttpStatus.ACCEPTED); 
 	}
 	
 	@PostMapping("/adicionar")
 	public ResponseEntity<Prestador> adicionar(@RequestBody @Valid Prestador prestador)  {
-		return prestadorService.adicionar(prestador);
+		return new ResponseEntity<Prestador>(prestadorService.adicionar(prestador), HttpStatus.CREATED);
 	}
 	
 	@PostMapping("/adicionarVarios")
 	public ResponseEntity<List<Prestador>> adicionarVarios(@RequestBody List<Prestador> prestadores) throws ApiRequestException {
-		return prestadorService.adicionarVarios(prestadores);
+		return new ResponseEntity<List<Prestador>>(prestadorService.adicionarVarios(prestadores), HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/detalhar/{cpf}")
 	public ResponseEntity<Prestador> detalhar(@PathVariable String cpf) {
-		return prestadorService.detalharPrestador(cpf);
+		return new ResponseEntity<Prestador>(prestadorService.detalharPrestador(cpf), HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping("/deletar/todos")
 	public ResponseEntity<String> deletarTudo(){
-		return prestadorService.deletarTudo();
+		return new ResponseEntity<String>(prestadorService.deletarTudo(), HttpStatus.ACCEPTED);
 	}
 	
 	@PutMapping("/alterar/{cpf}")
 	@Transactional
 	public ResponseEntity<Prestador> alterarCliente(@PathVariable String cpf, @RequestBody Prestador prestadorAtualizado) {
-		return prestadorService.alterarCliente(cpf, prestadorAtualizado);
+		return new ResponseEntity<Prestador>(prestadorService.alterarCliente(cpf, prestadorAtualizado), HttpStatus.ACCEPTED);
 	}
 
 }
