@@ -59,7 +59,10 @@ public class ClienteService {
 
 	public Cliente alterarCliente(String cpf, Cliente clienteAtualizado) {
 		cpf = formataCpf(cpf);
-
+		
+		// Verificar se o cpf é do cliente enviado
+		// Validar duplicidade
+		
 		validaCpf(cpf);
 		validaSeClienteNaoExiste(cpf);
 
