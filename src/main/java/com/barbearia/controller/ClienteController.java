@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,33 +29,33 @@ public class ClienteController {
 	
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Cliente>> listarTodos(){
-		return clienteService.listarTodos(); 
+		return new ResponseEntity<List<Cliente>>(clienteService.listarTodos(), HttpStatus.ACCEPTED); 
 	}
 	
 	@PostMapping("/adicionar")
 	public ResponseEntity<Cliente> adicionar(@RequestBody Cliente cliente)  {
-		return clienteService.adicionar(cliente);
+		return new ResponseEntity<Cliente>(clienteService.adicionar(cliente), HttpStatus.CREATED);
 	}
 	
 	@PostMapping("/adicionarVarios")
 	public ResponseEntity<List<Cliente>> adicionarVarios(@RequestBody List<Cliente> clientes) throws ApiRequestException {
-		return clienteService.adicionarVarios(clientes);
+		return new ResponseEntity<List<Cliente>>(clienteService.adicionarVarios(clientes), HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/detalhar/{cpf}")
-	public ResponseEntity<Cliente> detalhar(@PathVariable String cpf) {
-		return clienteService.detalharCliente(cpf);
+	public ResponseEntity<Cliente> detalharCliente(@PathVariable String cpf) {
+		return new ResponseEntity<Cliente>(clienteService.detalharCliente(cpf), HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping("/deletartudo")
 	public ResponseEntity<String> deletarTudo(){
-		return clienteService.deletarTudo();
+		return new ResponseEntity<String>(clienteService.deletarTudo(), HttpStatus.ACCEPTED);
 	}
 	
 	@PutMapping("/alterar/{cpf}")
 	@Transactional
 	public ResponseEntity<Cliente> alterarCliente(@PathVariable String cpf, @RequestBody Cliente clienteAtualizado) {
-		return clienteService.alterarCliente(cpf, clienteAtualizado);
+		return new ResponseEntity<Cliente>(clienteService.alterarCliente(cpf, clienteAtualizado), HttpStatus.CREATED);
 	}
 
 }

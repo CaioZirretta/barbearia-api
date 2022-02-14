@@ -32,12 +32,14 @@ public class AgendamentoService {
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
 		clienteService.validaCpf(cpfCliente);
 		clienteService.validaSeClienteNaoExiste(cpfCliente);
+		
 		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 
 	public List<Agendamento> procurarPorCpfPrestador(String cpfCliente) {
 		prestadorService.validaCpf(cpfCliente);
 		prestadorService.validaSePrestadorNaoExiste(cpfCliente);
+		
 		return agendamentoRepository.findByCpfPrestador(cpfCliente);
 	}
 

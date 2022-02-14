@@ -5,7 +5,6 @@ import java.util.List;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
@@ -18,58 +17,58 @@ public class ClienteService {
 	@Autowired
 	private ClienteRepository clienteRepository;
 
-	public ResponseEntity<List<Cliente>> listarTodos() {
-		return new ResponseEntity<List<Cliente>>(clienteRepository.findAll(), HttpStatus.ACCEPTED);
+	public List<Cliente> listarTodos() {
+		return clienteRepository.findAll();
 	}
 
-	public ResponseEntity<Cliente> adicionar(Cliente cliente) throws ApiRequestException {
+	public Cliente adicionar(Cliente cliente) throws ApiRequestException {
 		cliente.setCpf(formataCpf(cliente.getCpf()));
 		validaCpf(cliente.getCpf());
 		validaSeClienteExiste(cliente.getCpf());
 
-		return new ResponseEntity<Cliente>(clienteRepository.save(cliente), HttpStatus.CREATED);
+		return clienteRepository.save(cliente);
 	}
 
-	public ResponseEntity<List<Cliente>> adicionarVarios(List<Cliente> clientes) {
+	public List<Cliente> adicionarVarios(List<Cliente> clientes) {
 		clientes.forEach(cliente -> {
 			cliente.setCpf(formataCpf(cliente.getCpf()));
-			
+
 			validaCpf(cliente.getCpf());
 			validaSeClienteExiste(cliente.getCpf());
-			
+
 			clienteRepository.save(cliente);
 		});
 
-		return new ResponseEntity<List<Cliente>>(clientes, HttpStatus.CREATED);
+		return clientes;
 	}
 
-	public ResponseEntity<Cliente> detalharCliente(String cpf) {
+	public Cliente detalharCliente(String cpf) {
 		validaSeClienteNaoExiste(cpf);
 
-		return new ResponseEntity<Cliente>(clienteRepository.findByCpf(cpf), HttpStatus.ACCEPTED);
+		return clienteRepository.findByCpf(cpf);
 	}
 
-	public ResponseEntity<String> deletarTudo() {
+	public String deletarTudo() {
 		JSONObject json = new JSONObject();
 		json.put("message", "Registros apagados");
 
 		clienteRepository.deleteAll();
 
-		return new ResponseEntity<String>(json.toString(), HttpStatus.ACCEPTED);
+		return json.toString();
 	}
 
-	public ResponseEntity<Cliente> alterarCliente(String cpf, Cliente clienteAtualizado) {
+	public Cliente alterarCliente(String cpf, Cliente clienteAtualizado) {
 		cpf = formataCpf(cpf);
 
 		validaCpf(cpf);
 		validaSeClienteNaoExiste(cpf);
-		
+
 		Cliente cliente = clienteRepository.findByCpf(cpf);
 
 		cliente.setCpf(clienteAtualizado.getCpf());
 		cliente.setNome(clienteAtualizado.getNome());
 
-		return new ResponseEntity<Cliente>(cliente, HttpStatus.CREATED);
+		return cliente;
 	}
 
 	public void validaCpf(String cpf) {
