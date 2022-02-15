@@ -25,17 +25,17 @@ public class AgendamentoController {
 
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Agendamento>> listarTodos() {
-		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarTodos(), HttpStatus.ACCEPTED);
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarTodos(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/listar/cliente/{cpf}")
 	public ResponseEntity<List<Agendamento>> procurarPorCpfCliente(@PathVariable String cpf) {
-		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfCliente(cpf), HttpStatus.ACCEPTED);
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfCliente(cpf), HttpStatus.OK);
 	}
 	
 	@GetMapping("/listar/prestador/{cpf}")
 	public ResponseEntity<List<Agendamento>> procurarPorCpfPrestador(@PathVariable String cpf) {
-		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfPrestador(cpf), HttpStatus.ACCEPTED);	
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfPrestador(cpf), HttpStatus.OK);	
 	}
 
 	@PostMapping("/agendar")
@@ -43,9 +43,16 @@ public class AgendamentoController {
 		return new ResponseEntity<Agendamento>(agendamentoService.agendar(agendamento), HttpStatus.CREATED);
 	}
 	
+	@DeleteMapping("/deletar")
+	public ResponseEntity<?> cancelarAgendamento(@RequestBody Agendamento agendamento){
+		agendamentoService.deletarAgendamento(agendamento);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	@DeleteMapping("/deletar/todos")
-	public ResponseEntity<String> deletarTudo() {
-		return new ResponseEntity<String>(agendamentoService.deletarTudo(), HttpStatus.ACCEPTED);
+	public ResponseEntity<?> deletarTudo() {
+		agendamentoService.deletarTudo();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

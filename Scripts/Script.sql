@@ -1,1 +1,1 @@
-select * from agendamentos a 
+select first_value() from agendamentos a 

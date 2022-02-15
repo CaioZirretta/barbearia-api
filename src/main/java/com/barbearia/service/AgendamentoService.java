@@ -1,11 +1,12 @@
 package com.barbearia.service;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
@@ -43,13 +44,19 @@ public class AgendamentoService {
 		return agendamentoRepository.findByCpfPrestador(cpfCliente);
 	}
 
-	public String deletarTudo() {
-		JSONObject json = new JSONObject();
-		json.put("message", "Registros apagados");
-		// Mensagem dto, validar por http
-		agendamentoRepository.deleteAll();
+	public void deletarAgendamento(Agendamento agendamento) {
+		if (!verificaHorarioCliente(agendamento))
+			throw new ApiRequestException("Agendamento não encontrado");
 
-		return json.toString();
+		agendamentoRepository.deleteByDiaHorarioCliente(agendamento.getCpfCliente(), agendamento.getDia(),
+				agendamento.getHorario());
+	}
+
+	public void deletarTudo() {
+		if (agendamentoRepository.findCount() == 0)
+			throw new ApiRequestException("Não há registros a serem exibidos");
+
+		agendamentoRepository.deleteAll();
 	}
 
 	public Agendamento agendar(Agendamento agendamento) {
@@ -71,10 +78,21 @@ public class AgendamentoService {
 		return agendamentoRepository.save(agendamento);
 	}
 
-	
 	private boolean verificaHorarioValido(Agendamento agendamento) {
-		if (!Horarios.contains(agendamento.getHorario()))
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+		final LocalTime horarioInicio = LocalTime.parse("08:00", formatter);
+		final LocalTime horarioFim = LocalTime.parse("17:00", formatter);
+		final int hourInterval = 1;
+		List<LocalTime> horarios = new ArrayList<LocalTime>();
+
+		for (LocalTime horario = horarioInicio; horario
+				.isBefore(horarioFim); horario = horario.plusHours(hourInterval)) {
+			horarios.add(horario);
+		}
+		
+		if(!horarios.contains(agendamento.getHorario()))
 			return false;
+
 		return true;
 	}
 
