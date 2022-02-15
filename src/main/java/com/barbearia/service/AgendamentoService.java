@@ -1,8 +1,8 @@
 package com.barbearia.service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
-import com.barbearia.model.enums.Horarios;
 import com.barbearia.repository.AgendamentoRepository;
 
 @Service
@@ -30,9 +29,32 @@ public class AgendamentoService {
 		return agendamentoRepository.findAll();
 	}
 
+	public List<Agendamento> listarHorarioVagoMes(String data) {
+		if (!validaDataAnoMes(data))
+			throw new ApiRequestException("Data inválida. Formato aceito YYYY-MM");
+		
+		LocalDate anoMes = formataData(data);
+		
+		int i = 0;
+		
+		for(LocalDate dateLoop = LocalDate.of(anoMes.getYear(), anoMes.getMonthValue(), 1); 
+				i < 1; 
+				dateLoop = dateLoop.plusDays(1)) {
+			if(dateLoop.isEqual(LocalDate.of(anoMes.getYear(), anoMes.getMonthValue(), anoMes.lengthOfMonth())))
+				i = 1;
+			System.out.println(dateLoop);
+		} 
+		
+		return null;
+	}
+
+
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
 		clienteService.validaCpf(cpfCliente);
 		clienteService.validaSeClienteNaoExiste(cpfCliente);
+
+		if (agendamentoRepository.findByCpfCliente(cpfCliente) == null)
+			throw new ApiRequestException("Não foram encontrados agendamentos para este cliente");
 
 		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
@@ -40,6 +62,9 @@ public class AgendamentoService {
 	public List<Agendamento> procurarPorCpfPrestador(String cpfCliente) {
 		prestadorService.validaCpf(cpfCliente);
 		prestadorService.validaSePrestadorNaoExiste(cpfCliente);
+
+		if (agendamentoRepository.findByCpfCliente(cpfCliente) == null)
+			throw new ApiRequestException("Não foram encontrados agendamentos para este cliente");
 
 		return agendamentoRepository.findByCpfPrestador(cpfCliente);
 	}
@@ -60,10 +85,10 @@ public class AgendamentoService {
 	}
 
 	public Agendamento agendar(Agendamento agendamento) {
-		if (!verificaHorarioValido(agendamento))
+		if (!verificaHorarioComercial(agendamento))
 			throw new ApiRequestException("Horário inválido. Horários disponíveis entre 8 e 17.");
 
-		if (!verificaDataValida(agendamento))
+		if (!verificaDiaUtil(agendamento))
 			throw new ApiRequestException("Data inválida. Sábados e domingos não funcionam.");
 
 		if (!verificaDiaCliente(agendamento))
@@ -78,10 +103,18 @@ public class AgendamentoService {
 		return agendamentoRepository.save(agendamento);
 	}
 
-	private boolean verificaHorarioValido(Agendamento agendamento) {
-		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-		final LocalTime horarioInicio = LocalTime.parse("08:00", formatter);
-		final LocalTime horarioFim = LocalTime.parse("17:00", formatter);
+	// Validação
+
+	private boolean validaDataAnoMes(String data) {
+		String dataRegex = "([2][0-9]{3}\\-0[1-9]|1[0-2])";
+		if (data.matches(dataRegex))
+			return true;
+		return false;
+	}
+
+	private boolean verificaHorarioComercial(Agendamento agendamento) {
+		final LocalTime horarioInicio = LocalTime.of(8, 0);
+		final LocalTime horarioFim = LocalTime.of(18, 0);
 		final int hourInterval = 1;
 		List<LocalTime> horarios = new ArrayList<LocalTime>();
 
@@ -89,14 +122,14 @@ public class AgendamentoService {
 				.isBefore(horarioFim); horario = horario.plusHours(hourInterval)) {
 			horarios.add(horario);
 		}
-		
-		if(!horarios.contains(agendamento.getHorario()))
+
+		if (!horarios.contains(agendamento.getHorario()))
 			return false;
 
 		return true;
 	}
 
-	private boolean verificaDataValida(Agendamento agendamento) {
+	private boolean verificaDiaUtil(Agendamento agendamento) {
 		if (agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SATURDAY)
 				|| agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SUNDAY))
 			return false;
@@ -123,4 +156,7 @@ public class AgendamentoService {
 		return true;
 	}
 
+	private LocalDate formataData(String data) {
+		return LocalDate.of(Integer.parseInt(data.substring(0, 4)), Integer.parseInt(data.substring(5, 7)), 1);
+	}
 }

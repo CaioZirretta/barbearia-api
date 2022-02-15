@@ -24,8 +24,13 @@ public class AgendamentoController {
 	private AgendamentoService agendamentoService;
 
 	@GetMapping("/listar/todos")
-	public ResponseEntity<List<Agendamento>> listarTodos() {
-		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarTodos(), HttpStatus.OK);
+	public ResponseEntity<List<?>> listarTodos() {
+		return new ResponseEntity<List<?>>(agendamentoService.listarTodos(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/listar/agendamento/{data}")
+	public ResponseEntity<List<Agendamento>> listarPorMesVagos(@RequestBody String data){
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarHorarioVagoMes(data), HttpStatus.OK);
 	}
 	
 	@GetMapping("/listar/cliente/{cpf}")
