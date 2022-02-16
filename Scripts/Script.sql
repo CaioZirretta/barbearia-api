@@ -1,1 +1,1 @@
-select * from agendamentos where cpf_prestador = '12345678912' and dia = '2022-02-11'
+SELECT * FROM agendamentos WHERE dia = '11/02/2022' AND horario = '16:00' 

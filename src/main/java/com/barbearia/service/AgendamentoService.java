@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
+import com.barbearia.model.dto.AnoMesDto;
 import com.barbearia.model.dto.DiaPrestadorDto;
 import com.barbearia.repository.AgendamentoRepository;
 
@@ -31,38 +32,44 @@ public class AgendamentoService {
 	}
 
 	// Terminar
-	public List<LocalDate> listarHorarioVagoMes(String data) {
-		if (!validaDataAnoMes(data))
-			throw new ApiRequestException("Data inválida. Formato aceito YYYY-MM");
+	public List<LocalDate> listarHorarioVagoMes(AnoMesDto anoMesDto) {
 
-		List<Agendamento> horarioVago = new ArrayList<Agendamento>();
-
-		LocalDate anoMes = formataDataAnoMes(data);
-
-		LocalDate dateLoop = LocalDate.of(anoMes.getYear(), anoMes.getMonthValue(), 1);
-
-		do {
-
-			if (agendamentoRepository.findByDia(dateLoop) != null) {
+		if(!validaAnoMesDto(anoMesDto))
+			throw new ApiRequestException("Informações inválidas");
+		
+		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
+		
+		LocalTime horarioInicio = LocalTime.of(8, 0);
+		LocalTime horarioFim = LocalTime.of(18, 0);
+		int intervalo = 1;
+		
+		LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
+		LocalDate diaFim = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes() + 1, 1);
+		
+		for(LocalDate diaLoop = diaInicio;
+				diaLoop.isBefore(diaFim);
+				diaLoop = diaLoop.plusDays(intervalo)) {
+			horarioLoop:
+			for (LocalTime horarioLoop = horarioInicio; 
+					horarioLoop.isBefore(horarioFim); 
+					horarioLoop = horarioLoop.plusHours(intervalo)) {
+				if (agendamentoRepository.findByDiaHorario(diaLoop, horarioLoop) == null) {
+					diasVagos.add(diaLoop);
+					break horarioLoop;
+				}
 			}
-
-			dateLoop = dateLoop.plusDays(1);
-		} while (dateLoop.getDayOfMonth() < anoMes.lengthOfMonth());
-
-		return null;
+		}
+		
+		return diasVagos;
 	}
 
 	public List<LocalTime> listarHorarioVagoDiaPrestador(DiaPrestadorDto diaPrestadorDto) {
+		
 		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
 		
-		if(diaPrestadorDto.getDia() == null)
-			throw new ApiRequestException("Data inválida");
-		
-		System.out.println(diaPrestadorDto.getDia());
-
-		final LocalTime horarioInicio = LocalTime.of(8, 0);
-		final LocalTime horarioFim = LocalTime.of(18, 0);
-		final int intervalo = 1;
+		LocalTime horarioInicio = LocalTime.of(8, 0);
+		LocalTime horarioFim = LocalTime.of(18, 0);
+		int intervalo = 1;
 
 		for (LocalTime horario = horarioInicio; horario.isBefore(horarioFim); horario = horario.plusHours(intervalo)) {
 			if (agendamentoRepository.findHorarioByPrestador(diaPrestadorDto.getCpfPrestador(),
@@ -183,8 +190,9 @@ public class AgendamentoService {
 		return true;
 	}
 
-	private LocalDate formataDataAnoMes(String data) {
-		// Formata data para YYYY-MM
-		return LocalDate.of(Integer.parseInt(data.substring(0, 4)), Integer.parseInt(data.substring(5, 7)), 1);
+	private boolean validaAnoMesDto(AnoMesDto anoMesDto) {
+		if(anoMesDto.getMes() < 1 || anoMesDto.getMes() > 12)
+			return false;
+		return true;
 	}
 }

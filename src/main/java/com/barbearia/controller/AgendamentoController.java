@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Agendamento;
+import com.barbearia.model.dto.AnoMesDto;
 import com.barbearia.model.dto.DiaPrestadorDto;
 import com.barbearia.service.AgendamentoService;
 
@@ -47,7 +48,7 @@ public class AgendamentoController {
 	}
 
 	@GetMapping("/listar/horario/mes")
-	public ResponseEntity<List<LocalDate>> listarHorarioVagoMes(@RequestBody String anoMes) {
+	public ResponseEntity<List<LocalDate>> listarHorarioVagoMes(@RequestBody AnoMesDto anoMes) {
 		return new ResponseEntity<List<LocalDate>>(agendamentoService.listarHorarioVagoMes(anoMes), HttpStatus.OK);
 	}
 
