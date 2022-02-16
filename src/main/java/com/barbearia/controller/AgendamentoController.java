@@ -1,5 +1,7 @@
 package com.barbearia.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Agendamento;
+import com.barbearia.model.dto.DiaPrestadorDto;
 import com.barbearia.service.AgendamentoService;
 
 @RestController
@@ -27,33 +30,38 @@ public class AgendamentoController {
 	public ResponseEntity<List<?>> listarTodos() {
 		return new ResponseEntity<List<?>>(agendamentoService.listarTodos(), HttpStatus.OK);
 	}
-	
-	@GetMapping("/listar/agendamento/{data}")
-	public ResponseEntity<List<Agendamento>> listarPorMesVagos(@RequestBody String data){
-		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarHorarioVagoMes(data), HttpStatus.OK);
-	}
-	
+
 	@GetMapping("/listar/cliente/{cpf}")
 	public ResponseEntity<List<Agendamento>> procurarPorCpfCliente(@PathVariable String cpf) {
 		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfCliente(cpf), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/listar/prestador/{cpf}")
 	public ResponseEntity<List<Agendamento>> procurarPorCpfPrestador(@PathVariable String cpf) {
-		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfPrestador(cpf), HttpStatus.OK);	
+		return new ResponseEntity<List<Agendamento>>(agendamentoService.procurarPorCpfPrestador(cpf), HttpStatus.OK);
+	}
+
+	@GetMapping("/listar/horario/diaPrestador")
+	public ResponseEntity<List<LocalTime>> listarHorarioVagoDiaPrestador(@RequestBody DiaPrestadorDto diaPrestadorDto) {
+		return new ResponseEntity<List<LocalTime>>(agendamentoService.listarHorarioVagoDiaPrestador(diaPrestadorDto), HttpStatus.OK);
+	}
+
+	@GetMapping("/listar/horario/mes")
+	public ResponseEntity<List<LocalDate>> listarHorarioVagoMes(@RequestBody String anoMes) {
+		return new ResponseEntity<List<LocalDate>>(agendamentoService.listarHorarioVagoMes(anoMes), HttpStatus.OK);
 	}
 
 	@PostMapping("/agendar")
-	public ResponseEntity<Agendamento> agendar(@RequestBody Agendamento agendamento){
+	public ResponseEntity<Agendamento> agendar(@RequestBody Agendamento agendamento) {
 		return new ResponseEntity<Agendamento>(agendamentoService.agendar(agendamento), HttpStatus.CREATED);
 	}
-	
+
 	@DeleteMapping("/deletar")
-	public ResponseEntity<?> cancelarAgendamento(@RequestBody Agendamento agendamento){
+	public ResponseEntity<?> cancelarAgendamento(@RequestBody Agendamento agendamento) {
 		agendamentoService.deletarAgendamento(agendamento);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping("/deletar/todos")
 	public ResponseEntity<?> deletarTudo() {
 		agendamentoService.deletarTudo();

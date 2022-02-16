@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
+import com.barbearia.model.dto.DiaPrestadorDto;
 import com.barbearia.repository.AgendamentoRepository;
 
 @Service
@@ -29,25 +30,51 @@ public class AgendamentoService {
 		return agendamentoRepository.findAll();
 	}
 
-	public List<Agendamento> listarHorarioVagoMes(String data) {
+	// Terminar
+	public List<LocalDate> listarHorarioVagoMes(String data) {
 		if (!validaDataAnoMes(data))
 			throw new ApiRequestException("Data inválida. Formato aceito YYYY-MM");
-		
-		LocalDate anoMes = formataData(data);
-		
-		int i = 0;
-		
-		for(LocalDate dateLoop = LocalDate.of(anoMes.getYear(), anoMes.getMonthValue(), 1); 
-				i < 1; 
-				dateLoop = dateLoop.plusDays(1)) {
-			if(dateLoop.isEqual(LocalDate.of(anoMes.getYear(), anoMes.getMonthValue(), anoMes.lengthOfMonth())))
-				i = 1;
-			System.out.println(dateLoop);
-		} 
-		
+
+		List<Agendamento> horarioVago = new ArrayList<Agendamento>();
+
+		LocalDate anoMes = formataDataAnoMes(data);
+
+		LocalDate dateLoop = LocalDate.of(anoMes.getYear(), anoMes.getMonthValue(), 1);
+
+		do {
+
+			if (agendamentoRepository.findByDia(dateLoop) != null) {
+			}
+
+			dateLoop = dateLoop.plusDays(1);
+		} while (dateLoop.getDayOfMonth() < anoMes.lengthOfMonth());
+
 		return null;
 	}
 
+	public List<LocalTime> listarHorarioVagoDiaPrestador(DiaPrestadorDto diaPrestadorDto) {
+		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
+		
+		if(diaPrestadorDto.getDia() == null)
+			throw new ApiRequestException("Data inválida");
+		
+		System.out.println(diaPrestadorDto.getDia());
+
+		final LocalTime horarioInicio = LocalTime.of(8, 0);
+		final LocalTime horarioFim = LocalTime.of(18, 0);
+		final int intervalo = 1;
+
+		for (LocalTime horario = horarioInicio; horario.isBefore(horarioFim); horario = horario.plusHours(intervalo)) {
+			if (agendamentoRepository.findHorarioByPrestador(diaPrestadorDto.getCpfPrestador(),
+					diaPrestadorDto.getDia(), horario) == null)
+				horarioVago.add(horario);
+		}
+
+		if (horarioVago.isEmpty())
+			throw new ApiRequestException("Não há horários vagos no dia selecionado");
+
+		return horarioVago;
+	}
 
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
 		clienteService.validaCpf(cpfCliente);
@@ -156,7 +183,8 @@ public class AgendamentoService {
 		return true;
 	}
 
-	private LocalDate formataData(String data) {
+	private LocalDate formataDataAnoMes(String data) {
+		// Formata data para YYYY-MM
 		return LocalDate.of(Integer.parseInt(data.substring(0, 4)), Integer.parseInt(data.substring(5, 7)), 1);
 	}
 }

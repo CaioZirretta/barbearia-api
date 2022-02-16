@@ -14,6 +14,8 @@ import com.barbearia.model.Agendamento;
 public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>{
 	public List<Agendamento> findAll();
 	
+	// Read
+	
 	@Query("SELECT count(a) FROM Agendamento a")
 	public Integer findCount();
 	
@@ -21,10 +23,6 @@ public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>
 	public List<Agendamento> findByCpfPrestador(String cpf);
 	public List<Agendamento> findByDia(LocalDate dia);
 	public List<Agendamento> findByHorario(LocalDate horario); 
-	public void deleteAll();
-	
-	@Query("DELETE FROM Agendamento a WHERE a.cpfCliente = :cpfCliente AND a.dia = :dia AND a.horario = :horario ")
-	public void deleteByDiaHorarioCliente(String cpfCliente, LocalDate dia, LocalTime horario);
 	
 	@Query("SELECT a FROM Agendamento a WHERE a.cpfPrestador = :cpfPrestador AND a.dia = :dia AND a.horario = :horario")
 	public Agendamento findHorarioByPrestador(String cpfPrestador, LocalDate dia, LocalTime horario);
@@ -34,4 +32,14 @@ public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>
 	
 	@Query("SELECT a FROM Agendamento a WHERE a.cpfCliente = :cpfCliente AND a.dia = :dia")
 	public Agendamento findDiaByCliente(String cpfCliente, LocalDate dia);
+	
+	
+	// Delete
+	
+	public void deleteAll();
+	
+	@Query("DELETE FROM Agendamento a WHERE a.cpfCliente = :cpfCliente AND a.dia = :dia AND a.horario = :horario ")
+	public void deleteByDiaHorarioCliente(String cpfCliente, LocalDate dia, LocalTime horario);
+
+	
 }

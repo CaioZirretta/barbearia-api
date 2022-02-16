@@ -1,1 +1,1 @@
-select first_value() from agendamentos a 
+select * from agendamentos where cpf_prestador = '12345678912' and dia = '2022-02-11'
