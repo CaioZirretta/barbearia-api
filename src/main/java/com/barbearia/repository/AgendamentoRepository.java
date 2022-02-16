@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -24,6 +27,9 @@ public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>
 	public List<Agendamento> findByDia(LocalDate dia);
 	public List<Agendamento> findByHorario(LocalDate horario); 
 	
+	@Query("SELECT a FROM Agendamento a WHERE a.cpfCliente = :cpfCliente AND a.cpfPrestador = :cpfPrestador AND a.dia = :dia AND a.horario = :horario")
+	public Agendamento findByClientePrestadorDiaHorario(String cpfCliente, String cpfPrestador, LocalDate dia, LocalTime horario);
+	
 	@Query("SELECT a FROM Agendamento a WHERE a.cpfPrestador = :cpfPrestador AND a.dia = :dia AND a.horario = :horario")
 	public Agendamento findHorarioByPrestador(String cpfPrestador, LocalDate dia, LocalTime horario);
 	
@@ -36,13 +42,15 @@ public interface AgendamentoRepository extends CrudRepository<Agendamento, Long>
 	@Query("SELECT a FROM Agendamento a WHERE a.dia = :dia AND a.horario = :horario")
 	public Agendamento findByDiaHorario(LocalDate dia, LocalTime horario);
 	
-	
 	// Delete
 	
+	@Transactional
+	@Modifying
 	public void deleteAll();
 	
-	@Query("DELETE FROM Agendamento a WHERE a.cpfCliente = :cpfCliente AND a.dia = :dia AND a.horario = :horario ")
-	public void deleteByDiaHorarioCliente(String cpfCliente, LocalDate dia, LocalTime horario);
-
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM Agendamento a WHERE a.cpfCliente = :cpfCliente AND a.cpfPrestador = :cpfPrestador AND a.dia = :dia AND a.horario = :horario")
+	public void deleteByDiaHorarioCliente(String cpfCliente, String cpfPrestador, LocalDate dia, LocalTime horario);
 	
 }

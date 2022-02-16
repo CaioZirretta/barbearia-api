@@ -28,10 +28,11 @@ public class AgendamentoService {
 	private PrestadorService prestadorService;
 
 	public List<Agendamento> listarTodos() {
+		if(agendamentoRepository.findCount() == 0)
+			throw new ApiRequestException("Não existem agendamentos marcados");
 		return agendamentoRepository.findAll();
 	}
 
-	// Terminar
 	public List<LocalDate> listarHorarioVagoMes(AnoMesDto anoMesDto) {
 
 		if(!validaAnoMesDto(anoMesDto))
@@ -104,11 +105,11 @@ public class AgendamentoService {
 	}
 
 	public void deletarAgendamento(Agendamento agendamento) {
-		if (!verificaHorarioCliente(agendamento))
+		if (verificaHorarioCliente(agendamento))
 			throw new ApiRequestException("Agendamento não encontrado");
-
-		agendamentoRepository.deleteByDiaHorarioCliente(agendamento.getCpfCliente(), agendamento.getDia(),
-				agendamento.getHorario());
+		
+		agendamentoRepository.deleteByDiaHorarioCliente(agendamento.getCpfCliente(), agendamento.getCpfPrestador(),
+				agendamento.getDia(), agendamento.getHorario());
 	}
 
 	public void deletarTudo() {
@@ -138,15 +139,9 @@ public class AgendamentoService {
 	}
 
 	// Validação
-
-	private boolean validaDataAnoMes(String data) {
-		String dataRegex = "([2][0-9]{3}\\-0[1-9]|1[0-2])";
-		if (data.matches(dataRegex))
-			return true;
-		return false;
-	}
-
+	
 	private boolean verificaHorarioComercial(Agendamento agendamento) {
+		// Verifica se o horário é comercial		
 		final LocalTime horarioInicio = LocalTime.of(8, 0);
 		final LocalTime horarioFim = LocalTime.of(18, 0);
 		final int hourInterval = 1;
@@ -164,6 +159,7 @@ public class AgendamentoService {
 	}
 
 	private boolean verificaDiaUtil(Agendamento agendamento) {
+		// Verifica se o dia é útil
 		if (agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SATURDAY)
 				|| agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SUNDAY))
 			return false;
@@ -171,6 +167,8 @@ public class AgendamentoService {
 	}
 
 	private boolean verificaHorarioCliente(Agendamento agendamento) {
+		// Verifica se o cliente tem um horário agendado no dia e horário informados
+		// Específico para dia e horário
 		if (agendamentoRepository.findHorarioByCliente(agendamento.getCpfCliente(), agendamento.getDia(),
 				agendamento.getHorario()) != null)
 			return false;
@@ -178,12 +176,15 @@ public class AgendamentoService {
 	}
 
 	private boolean verificaDiaCliente(Agendamento agendamento) {
+		// Verifica se o cliente possui algum horário no dia informado
+		// Específico para apenas o dia
 		if (agendamentoRepository.findDiaByCliente(agendamento.getCpfCliente(), agendamento.getDia()) != null)
 			return false;
 		return true;
 	}
 
 	private boolean verificaHorarioPrestador(Agendamento agendamento) {
+		// Verifica se o prestador está vago no dia e horário informados
 		if (agendamentoRepository.findHorarioByPrestador(agendamento.getCpfPrestador(), agendamento.getDia(),
 				agendamento.getHorario()) != null)
 			return false;
@@ -191,6 +192,7 @@ public class AgendamentoService {
 	}
 
 	private boolean validaAnoMesDto(AnoMesDto anoMesDto) {
+		// Valida o mês do DTO
 		if(anoMesDto.getMes() < 1 || anoMesDto.getMes() > 12)
 			return false;
 		return true;

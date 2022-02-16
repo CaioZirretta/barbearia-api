@@ -1,1 +1,1 @@
-{"resources":{"Scripts/Script.sql":{"sql-editor-data-source-id":"postgres-jdbc-17edfa65253-3a2d4390bbb6954c","default-datasource":"postgres-jdbc-17edfa65253-3a2d4390bbb6954c","default-catalog":"barbearia","default-schema":"public"}}}
+{"resources":{"Scripts/Script.sql":{"default-schema":"public","sql-editor-data-source-id":"postgres-jdbc-17edfa65253-3a2d4390bbb6954c","default-datasource":"postgres-jdbc-17edfa65253-3a2d4390bbb6954c","default-catalog":"barbearia"}}}
