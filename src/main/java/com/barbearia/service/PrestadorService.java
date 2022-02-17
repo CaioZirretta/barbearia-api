@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Prestador;
 import com.barbearia.model.dto.PessoaDto;
+import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.common.Common;
 
@@ -16,6 +17,9 @@ public class PrestadorService {
 
 	@Autowired
 	private PrestadorRepository prestadorRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	public List<Prestador> listarTodos() {
 		return prestadorRepository.findAll();
@@ -26,6 +30,9 @@ public class PrestadorService {
 
 		if (verificaSePrestadorExiste(prestador.getCpf()))
 			throw new ApiRequestException("Prestador já existe!");
+		
+		if(clienteRepository.findByCpf(prestador.getCpf()) != null)
+			throw new ApiRequestException("CPF pertence a um cliente");
 
 		if (!Common.validaCpf(prestador.getCpf()))
 			throw new ApiRequestException(

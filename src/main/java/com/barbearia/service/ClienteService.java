@@ -9,6 +9,7 @@ import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
 import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.ClienteRepository;
+import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.common.Common;
 
 @Service
@@ -16,6 +17,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private PrestadorRepository prestadorRepository;
 
 	public List<Cliente> listarTodos() {
 		return clienteRepository.findAll();
@@ -23,6 +27,9 @@ public class ClienteService {
 
 	public Cliente adicionar(Cliente cliente) throws ApiRequestException {
 		cliente.setCpf(Common.formataCpf(cliente.getCpf()));
+		
+		if(prestadorRepository.findByCpf(cliente.getCpf()) != null)
+			throw new ApiRequestException("CPF pertence a um prestador");
 
 		if(verificaSeClienteExiste(cliente.getCpf()))
 			throw new ApiRequestException("Cliente já existe!");
