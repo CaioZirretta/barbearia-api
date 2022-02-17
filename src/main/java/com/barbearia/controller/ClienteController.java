@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.ClienteService;
 
 @RestController
@@ -29,12 +28,12 @@ public class ClienteController {
 	
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Cliente>> listarTodos(){
-		return new ResponseEntity<List<Cliente>>(clienteService.listarTodos(), HttpStatus.ACCEPTED); 
+		return new ResponseEntity<List<Cliente>>(clienteService.listarTodos(), HttpStatus.OK); 
 	}
 	
 	@GetMapping("/detalhar/{cpf}")
 	public ResponseEntity<Cliente> detalharCliente(@PathVariable String cpf) {
-		return new ResponseEntity<Cliente>(clienteService.detalharCliente(cpf), HttpStatus.ACCEPTED);
+		return new ResponseEntity<Cliente>(clienteService.detalharCliente(cpf), HttpStatus.OK);
 	}
 	
 	@PostMapping("/adicionar")
@@ -42,10 +41,10 @@ public class ClienteController {
 		return new ResponseEntity<Cliente>(clienteService.adicionar(cliente), HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/alterar/{cpf}")
+	@PutMapping("/alterar")
 	@Transactional
-	public ResponseEntity<Cliente> alterarCliente(@PathVariable String cpf, @RequestBody Cliente clienteAtualizado) {
-		return new ResponseEntity<Cliente>(clienteService.alterarCliente(cpf, clienteAtualizado), HttpStatus.CREATED);
+	public ResponseEntity<Cliente> alterarCliente(@RequestBody PessoaDto pessoaDto) {
+		return new ResponseEntity<Cliente>(clienteService.alterarCliente(pessoaDto), HttpStatus.OK);
 	}
 
 }

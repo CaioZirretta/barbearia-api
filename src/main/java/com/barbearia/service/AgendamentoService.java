@@ -14,6 +14,7 @@ import com.barbearia.model.Agendamento;
 import com.barbearia.model.dto.AnoMesDto;
 import com.barbearia.model.dto.DiaPrestadorDto;
 import com.barbearia.repository.AgendamentoRepository;
+import com.barbearia.service.common.Common;
 
 @Service
 public class AgendamentoService {
@@ -28,46 +29,42 @@ public class AgendamentoService {
 	private PrestadorService prestadorService;
 
 	public List<Agendamento> listarTodos() {
-		if(agendamentoRepository.findCount() == 0)
+		if (agendamentoRepository.findCount() == 0)
 			throw new ApiRequestException("Não existem agendamentos marcados");
 		return agendamentoRepository.findAll();
 	}
 
 	public List<LocalDate> listarHorarioVagoMes(AnoMesDto anoMesDto) {
 
-		if(!validaAnoMesDto(anoMesDto))
+		if (!validaAnoMesDto(anoMesDto))
 			throw new ApiRequestException("Informações inválidas");
-		
+
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
-		
+
 		LocalTime horarioInicio = LocalTime.of(8, 0);
 		LocalTime horarioFim = LocalTime.of(18, 0);
 		int intervalo = 1;
-		
+
 		LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
 		LocalDate diaFim = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes() + 1, 1);
-		
-		for(LocalDate diaLoop = diaInicio;
-				diaLoop.isBefore(diaFim);
-				diaLoop = diaLoop.plusDays(intervalo)) {
-			horarioLoop:
-			for (LocalTime horarioLoop = horarioInicio; 
-					horarioLoop.isBefore(horarioFim); 
-					horarioLoop = horarioLoop.plusHours(intervalo)) {
+
+		for (LocalDate diaLoop = diaInicio; diaLoop.isBefore(diaFim); diaLoop = diaLoop.plusDays(intervalo)) {
+			horarioLoop: for (LocalTime horarioLoop = horarioInicio; horarioLoop
+					.isBefore(horarioFim); horarioLoop = horarioLoop.plusHours(intervalo)) {
 				if (agendamentoRepository.findByDiaHorario(diaLoop, horarioLoop) == null) {
 					diasVagos.add(diaLoop);
 					break horarioLoop;
 				}
 			}
 		}
-		
+
 		return diasVagos;
 	}
 
 	public List<LocalTime> listarHorarioVagoDiaPrestador(DiaPrestadorDto diaPrestadorDto) {
-		
+
 		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
-		
+
 		LocalTime horarioInicio = LocalTime.of(8, 0);
 		LocalTime horarioFim = LocalTime.of(18, 0);
 		int intervalo = 1;
@@ -85,29 +82,30 @@ public class AgendamentoService {
 	}
 
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
-		clienteService.validaCpf(cpfCliente);
-		clienteService.validaSeClienteNaoExiste(cpfCliente);
-
-		if (agendamentoRepository.findByCpfCliente(cpfCliente) == null)
-			throw new ApiRequestException("Não foram encontrados agendamentos para este cliente");
-
+		Common.validaCpf(cpfCliente);
+		if (!clienteService.verificaSeClienteExiste(cpfCliente))
+			throw new ApiRequestException("Cliente não existe");
 		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 
-	public List<Agendamento> procurarPorCpfPrestador(String cpfCliente) {
-		prestadorService.validaCpf(cpfCliente);
-		prestadorService.validaSePrestadorNaoExiste(cpfCliente);
+	public List<Agendamento> procurarPorCpfPrestador(String cpfPrestador) {
+		if (!Common.validaCpf(cpfPrestador))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
 
-		if (agendamentoRepository.findByCpfCliente(cpfCliente) == null)
+		if (!prestadorService.verificaSePrestadorExiste(cpfPrestador))
+			throw new ApiRequestException("Prestador não encontrado");
+
+		if (agendamentoRepository.findByCpfCliente(cpfPrestador) == null)
 			throw new ApiRequestException("Não foram encontrados agendamentos para este cliente");
 
-		return agendamentoRepository.findByCpfPrestador(cpfCliente);
+		return agendamentoRepository.findByCpfPrestador(cpfPrestador);
 	}
 
 	public void deletarAgendamento(Agendamento agendamento) {
 		if (verificaHorarioCliente(agendamento))
 			throw new ApiRequestException("Agendamento não encontrado");
-		
+
 		agendamentoRepository.deleteByDiaHorarioCliente(agendamento.getCpfCliente(), agendamento.getCpfPrestador(),
 				agendamento.getDia(), agendamento.getHorario());
 	}
@@ -132,9 +130,9 @@ public class AgendamentoService {
 	}
 
 	// Validação
-	
+
 	private boolean verificaHorarioComercial(Agendamento agendamento) {
-		// Verifica se o horário é comercial		
+		// Verifica se o horário é comercial
 		final LocalTime horarioInicio = LocalTime.of(8, 0);
 		final LocalTime horarioFim = LocalTime.of(18, 0);
 		final int hourInterval = 1;
@@ -186,7 +184,7 @@ public class AgendamentoService {
 
 	private boolean validaAnoMesDto(AnoMesDto anoMesDto) {
 		// Valida o mês do DTO
-		if(anoMesDto.getMes() < 1 || anoMesDto.getMes() > 12)
+		if (anoMesDto.getMes() < 1 || anoMesDto.getMes() > 12)
 			return false;
 		return true;
 	}

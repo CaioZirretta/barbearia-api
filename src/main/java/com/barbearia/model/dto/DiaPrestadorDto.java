@@ -3,6 +3,7 @@ package com.barbearia.model.dto;
 import java.time.LocalDate;
 
 public class DiaPrestadorDto {
+	// Contém um dia e um cpf de prestador, separados
 	private LocalDate dia;
 	private String cpfPrestador;
 

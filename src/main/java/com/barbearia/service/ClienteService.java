@@ -2,14 +2,14 @@ package com.barbearia.service;
 
 import java.util.List;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.ClienteRepository;
+import com.barbearia.service.common.Common;
 
 @Service
 public class ClienteService {
@@ -22,86 +22,53 @@ public class ClienteService {
 	}
 
 	public Cliente adicionar(Cliente cliente) throws ApiRequestException {
-		cliente.setCpf(formataCpf(cliente.getCpf()));
-		validaCpf(cliente.getCpf());
-		validaSeClienteExiste(cliente.getCpf());
+		cliente.setCpf(Common.formataCpf(cliente.getCpf()));
+
+		if(verificaSeClienteExiste(cliente.getCpf()))
+			throw new ApiRequestException("Cliente já existe!");
+		
+		if (!Common.validaCpf(cliente.getCpf()))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
+
+		if(cliente.getNome().isEmpty())
+			throw new ApiRequestException("O nome não pode estar vazio");
 
 		return clienteRepository.save(cliente);
 	}
 
-	public List<Cliente> adicionarVarios(List<Cliente> clientes) {
-		clientes.forEach(cliente -> {
-			cliente.setCpf(formataCpf(cliente.getCpf()));
-
-			validaCpf(cliente.getCpf());
-			validaSeClienteExiste(cliente.getCpf());
-
-			clienteRepository.save(cliente);
-		});
-
-		return clientes;
-	}
-
 	public Cliente detalharCliente(String cpf) {
-		validaSeClienteNaoExiste(cpf);
+		if(!verificaSeClienteExiste(cpf))
+			throw new ApiRequestException("Cliente não existe");
 
 		return clienteRepository.findByCpf(cpf);
 	}
 
-	public String deletarTudo() {
-		JSONObject json = new JSONObject();
-		json.put("message", "Registros apagados");
+	public Cliente alterarCliente(PessoaDto pessoaDto) {
+		pessoaDto.setCpf(Common.formataCpf(pessoaDto.getCpf()));
 
-		clienteRepository.deleteAll();
+		if (!Common.validaCpf(pessoaDto.getCpf()))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
 
-		return json.toString();
-	}
-
-	public Cliente alterarCliente(String cpf, Cliente clienteAtualizado) {
-		cpf = formataCpf(cpf);
+		if (!verificaSeClienteExiste(pessoaDto.getCpf()))
+			throw new ApiRequestException("Cliente não existe");
 		
-		// Verificar se o cpf é do cliente enviado
-		// Validar duplicidade
-		
-		validaCpf(cpf);
-		validaSeClienteNaoExiste(cpf);
+		if(pessoaDto.getNomeNovo().isEmpty())
+			throw new ApiRequestException("O nome não pode estar vazio");
 
-		Cliente cliente = clienteRepository.findByCpf(cpf);
+		Cliente cliente = clienteRepository.findByCpf(pessoaDto.getCpf());
 
-		cliente.setCpf(clienteAtualizado.getCpf());
-		cliente.setNome(clienteAtualizado.getNome());
+		cliente.setCpf(pessoaDto.getCpfNovo());
+		cliente.setNome(pessoaDto.getNomeNovo());
 
 		return cliente;
 	}
 
-	public void validaCpf(String cpf) {
-		String cpfRegex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
-		String formatosAceitos = "Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00";
-
-		if (cpf.isEmpty() || cpf.isBlank())
-			throw new ApiRequestException("O campo CPF não pode estar vazio. " + formatosAceitos, HttpStatus.FORBIDDEN);
-
-		if (!cpf.matches(cpfRegex))
-			throw new ApiRequestException("CPF não é válido. " + formatosAceitos, HttpStatus.FORBIDDEN);
-	}
-
-	public String formataCpf(String cpf) {
-		cpf.trim();
-		cpf.replace("-", "");
-		cpf.replace("/", "");
-		cpf.replace(".", "");
-		return cpf;
-	}
-
-	// Use para saber se o cliente já existe
-	public void validaSeClienteExiste(String cpf) {
+	public boolean verificaSeClienteExiste(String cpf) {
+		// Verifica se o cliente já existe
 		if (clienteRepository.findByCpf(cpf) != null)
-			throw new ApiRequestException("Cliente " + cpf + " já existe!", HttpStatus.FORBIDDEN);
-	}
-
-	// Use para saber se o cliente não existe
-	public void validaSeClienteNaoExiste(String cpf) {
-		if (clienteRepository.findByCpf(cpf) == null)
-			throw new ApiRequestException("Cliente " + cpf + " não encontrado!", HttpStatus.NOT_FOUND);
+			return true;
+		return false;
 	}
 }

@@ -2,14 +2,14 @@ package com.barbearia.service;
 
 import java.util.List;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Prestador;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.PrestadorRepository;
+import com.barbearia.service.common.Common;
 
 @Service
 public class PrestadorService {
@@ -22,83 +22,55 @@ public class PrestadorService {
 	}
 
 	public Prestador adicionar(Prestador prestador) throws ApiRequestException {
-		prestador.setCpf(formataCpf(prestador.getCpf()));
-		validaCpf(prestador.getCpf());
-		validaSePrestadorExiste(prestador.getCpf());
+		prestador.setCpf(Common.formataCpf(prestador.getCpf()));
+
+		if (verificaSePrestadorExiste(prestador.getCpf()))
+			throw new ApiRequestException("Prestador já existe!");
+
+		if (!Common.validaCpf(prestador.getCpf()))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
+		
+		if(prestador.getNome().isEmpty())
+			throw new ApiRequestException("O nome não pode estar vazio");
 
 		return prestadorRepository.save(prestador);
 	}
 
-	public List<Prestador> adicionarVarios(List<Prestador> prestadores) {
-		prestadores.forEach(prestador -> {
-			prestador.setCpf(formataCpf(prestador.getCpf()));
-
-			validaCpf(prestador.getCpf());
-			validaSePrestadorExiste(prestador.getCpf());
-
-			prestadorRepository.save(prestador);
-		});
-
-		return prestadores;
-	}
-
 	public Prestador detalharPrestador(String cpf) {
-		validaSePrestadorNaoExiste(cpf);
+		if (!verificaSePrestadorExiste(cpf))
+			throw new ApiRequestException("Prestador não existe");
 
 		return prestadorRepository.findByCpf(cpf);
 	}
 
-	public String deletarTudo() {
-		JSONObject json = new JSONObject();
-		json.put("message", "Registros apagados");
+	public Prestador alterarPrestador(PessoaDto pessoaDto) {
+		pessoaDto.setCpf(Common.formataCpf(pessoaDto.getCpf()));
 
-		prestadorRepository.deleteAll();
+		if (!Common.validaCpf(pessoaDto.getCpf()))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
 
-		return json.toString();
-	}
+		if (!verificaSePrestadorExiste(pessoaDto.getCpf()))
+			throw new ApiRequestException("Prestador não existe");
+		
+		if(pessoaDto.getNomeNovo().isEmpty())
+			throw new ApiRequestException("O nome não pode estar vazio");
 
-	public Prestador alterarCliente(String cpf, Prestador prestadorAtualizado) {
-		cpf = formataCpf(cpf);
+		Prestador prestador = prestadorRepository.findByCpf(pessoaDto.getCpf());
 
-		validaCpf(cpf);
-		validaSePrestadorNaoExiste(cpf);
-
-		Prestador prestador = prestadorRepository.findByCpf(cpf);
-
-		prestador.setCpf(prestadorAtualizado.getCpf());
-		prestador.setNome(prestador.getNome());
+		prestador.setCpf(pessoaDto.getCpfNovo());
+		prestador.setNome(pessoaDto.getNomeNovo());
 
 		return prestador;
 	}
 
-	public void validaCpf(String cpf) {
-		String cpfRegex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
-		String formatosAceitos = "Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00";
-
-		if (cpf.isEmpty() || cpf.isBlank())
-			throw new ApiRequestException("O campo CPF não pode estar vazio. " + formatosAceitos, HttpStatus.FORBIDDEN);
-
-		if (!cpf.matches(cpfRegex))
-			throw new ApiRequestException("CPF não é válido. " + formatosAceitos, HttpStatus.FORBIDDEN);
-	}
-
-	public String formataCpf(String cpf) {
-		cpf.trim();
-		cpf.replace("-", "");
-		cpf.replace("/", "");
-		cpf.replace(".", "");
-		return cpf;
-	}
-
-	// Use para saber se o prestador já existe
-	public void validaSePrestadorExiste(String cpf) {
+	// Validações
+	
+	public boolean verificaSePrestadorExiste(String cpf) {
+		// Verifica se um prestador já existe
 		if (prestadorRepository.findByCpf(cpf) != null)
-			throw new ApiRequestException("Prestador " + cpf + " já existe!", HttpStatus.FORBIDDEN);
-	}
-
-	// Use para saber se o prestador não existe
-	public void validaSePrestadorNaoExiste(String cpf) {
-		if (prestadorRepository.findByCpf(cpf) == null)
-			throw new ApiRequestException("Prestador " + cpf + " não encontrado!", HttpStatus.NOT_FOUND);
+			return true;
+		return false;
 	}
 }
