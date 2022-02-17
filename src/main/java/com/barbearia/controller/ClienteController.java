@@ -32,24 +32,14 @@ public class ClienteController {
 		return new ResponseEntity<List<Cliente>>(clienteService.listarTodos(), HttpStatus.ACCEPTED); 
 	}
 	
-	@PostMapping("/adicionar")
-	public ResponseEntity<Cliente> adicionar(@RequestBody Cliente cliente)  {
-		return new ResponseEntity<Cliente>(clienteService.adicionar(cliente), HttpStatus.CREATED);
-	}
-	
-	@PostMapping("/adicionarVarios")
-	public ResponseEntity<List<Cliente>> adicionarVarios(@RequestBody List<Cliente> clientes) throws ApiRequestException {
-		return new ResponseEntity<List<Cliente>>(clienteService.adicionarVarios(clientes), HttpStatus.CREATED);
-	}
-	
 	@GetMapping("/detalhar/{cpf}")
 	public ResponseEntity<Cliente> detalharCliente(@PathVariable String cpf) {
 		return new ResponseEntity<Cliente>(clienteService.detalharCliente(cpf), HttpStatus.ACCEPTED);
 	}
 	
-	@DeleteMapping("/deletartudo")
-	public ResponseEntity<String> deletarTudo(){
-		return new ResponseEntity<String>(clienteService.deletarTudo(), HttpStatus.ACCEPTED);
+	@PostMapping("/adicionar")
+	public ResponseEntity<Cliente> adicionar(@RequestBody Cliente cliente)  {
+		return new ResponseEntity<Cliente>(clienteService.adicionar(cliente), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/alterar/{cpf}")

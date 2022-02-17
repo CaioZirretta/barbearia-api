@@ -32,25 +32,15 @@ public class PrestadorController {
 	public ResponseEntity<List<Prestador>> listarTodos(){
 		return new ResponseEntity<List<Prestador>>(prestadorService.listarTodos(), HttpStatus.ACCEPTED); 
 	}
-	
-	@PostMapping("/adicionar")
-	public ResponseEntity<Prestador> adicionar(@RequestBody @Valid Prestador prestador)  {
-		return new ResponseEntity<Prestador>(prestadorService.adicionar(prestador), HttpStatus.CREATED);
-	}
-	
-	@PostMapping("/adicionarVarios")
-	public ResponseEntity<List<Prestador>> adicionarVarios(@RequestBody List<Prestador> prestadores) throws ApiRequestException {
-		return new ResponseEntity<List<Prestador>>(prestadorService.adicionarVarios(prestadores), HttpStatus.CREATED);
-	}
-	
+
 	@GetMapping("/detalhar/{cpf}")
 	public ResponseEntity<Prestador> detalhar(@PathVariable String cpf) {
 		return new ResponseEntity<Prestador>(prestadorService.detalharPrestador(cpf), HttpStatus.ACCEPTED);
 	}
 	
-	@DeleteMapping("/deletar/todos")
-	public ResponseEntity<String> deletarTudo(){
-		return new ResponseEntity<String>(prestadorService.deletarTudo(), HttpStatus.ACCEPTED);
+	@PostMapping("/adicionar")
+	public ResponseEntity<Prestador> adicionar(@RequestBody @Valid Prestador prestador)  {
+		return new ResponseEntity<Prestador>(prestadorService.adicionar(prestador), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/alterar/{cpf}")
