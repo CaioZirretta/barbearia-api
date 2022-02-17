@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "agendamentos" /*, @UniqueConstraint(columnNames = { "dia", "horario", "cpfCliente"})*/)
+@Table(name = "agendamentos")
 public class Agendamento {
 
 	@Id
