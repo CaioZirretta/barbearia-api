@@ -57,15 +57,9 @@ public class AgendamentoController {
 		return new ResponseEntity<Agendamento>(agendamentoService.agendar(agendamento), HttpStatus.CREATED);
 	}
 
-	@DeleteMapping("/deletar")
+	@DeleteMapping("/cancelar")
 	public ResponseEntity<?> cancelarAgendamento(@RequestBody Agendamento agendamento) {
 		agendamentoService.deletarAgendamento(agendamento);
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
-
-	@DeleteMapping("/deletar/todos")
-	public ResponseEntity<?> deletarTudo() {
-		agendamentoService.deletarTudo();
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

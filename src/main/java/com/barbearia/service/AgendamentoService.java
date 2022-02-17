@@ -112,13 +112,6 @@ public class AgendamentoService {
 				agendamento.getDia(), agendamento.getHorario());
 	}
 
-	public void deletarTudo() {
-		if (agendamentoRepository.findCount() == 0)
-			throw new ApiRequestException("Não há registros a serem exibidos");
-
-		agendamentoRepository.deleteAll();
-	}
-
 	public Agendamento agendar(Agendamento agendamento) {
 		if (!verificaHorarioComercial(agendamento))
 			throw new ApiRequestException("Horário inválido. Horários disponíveis entre 8 e 17.");
