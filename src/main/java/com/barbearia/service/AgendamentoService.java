@@ -111,6 +111,9 @@ public class AgendamentoService {
 	}
 
 	public Agendamento agendar(Agendamento agendamento) {
+		if (!verificaHorarioAtual(agendamento))
+			throw new ApiRequestException("Não é possível agendar para datas ou horários passados");
+
 		if (!verificaHorarioComercial(agendamento))
 			throw new ApiRequestException("Horário inválido. Horários disponíveis entre 8 e 17.");
 
@@ -136,7 +139,7 @@ public class AgendamentoService {
 		final LocalTime horarioInicio = LocalTime.of(8, 0);
 		final LocalTime horarioFim = LocalTime.of(18, 0);
 		final int hourInterval = 1;
-		
+
 		List<LocalTime> horarios = new ArrayList<LocalTime>();
 
 		for (LocalTime horario = horarioInicio; horario
@@ -163,6 +166,14 @@ public class AgendamentoService {
 		// Específico para dia e horário
 		if (agendamentoRepository.findHorarioByCliente(agendamento.getCpfCliente(), agendamento.getDia(),
 				agendamento.getHorario()) != null)
+			return false;
+		return true;
+	}
+
+	private boolean verificaHorarioAtual(Agendamento agendamento) {
+		if (agendamento.getDia().isBefore(LocalDate.now()))
+			return false;
+		if (agendamento.getDia().isEqual(LocalDate.now()) && agendamento.getHorario().isBefore(LocalTime.now()))
 			return false;
 		return true;
 	}
