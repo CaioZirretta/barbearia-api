@@ -21,12 +21,15 @@ public class AgendamentoService {
 
 	@Autowired
 	private AgendamentoRepository agendamentoRepository;
-
 	@Autowired
 	private ClienteService clienteService;
-
 	@Autowired
 	private PrestadorService prestadorService;
+
+	private static final LocalTime horarioInicio = LocalTime.of(8, 0);
+	private static final LocalTime horarioFim = LocalTime.of(18, 0);
+	private static final int intervaloDias = 1;
+	private static final int intervaloHoras = 1;
 
 	public List<Agendamento> listarTodos() {
 		if (agendamentoRepository.findCount() == 0)
@@ -41,16 +44,12 @@ public class AgendamentoService {
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
 
-		final LocalTime horarioInicio = LocalTime.of(8, 0);
-		final LocalTime horarioFim = LocalTime.of(18, 0);
-		final int intervalo = 1;
-
 		final LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
 		final LocalDate diaFim = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes() + 1, 1);
 
-		for (LocalDate diaLoop = diaInicio; diaLoop.isBefore(diaFim); diaLoop = diaLoop.plusDays(intervalo)) {
+		for (LocalDate diaLoop = diaInicio; diaLoop.isBefore(diaFim); diaLoop = diaLoop.plusDays(intervaloDias)) {
 			horarioLoop: for (LocalTime horarioLoop = horarioInicio; horarioLoop
-					.isBefore(horarioFim); horarioLoop = horarioLoop.plusHours(intervalo)) {
+					.isBefore(horarioFim); horarioLoop = horarioLoop.plusHours(intervaloHoras)) {
 				if (agendamentoRepository.findByDiaHorario(diaLoop, horarioLoop) == null) {
 					diasVagos.add(diaLoop);
 					break horarioLoop;
@@ -65,11 +64,7 @@ public class AgendamentoService {
 
 		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
 
-		final LocalTime horarioInicio = LocalTime.of(8, 0);
-		final LocalTime horarioFim = LocalTime.of(18, 0);
-		final int intervalo = 1;
-
-		for (LocalTime horario = horarioInicio; horario.isBefore(horarioFim); horario = horario.plusHours(intervalo)) {
+		for (LocalTime horario = horarioInicio; horario.isBefore(horarioFim); horario = horario.plusHours(intervaloHoras)) {
 			if (agendamentoRepository.findHorarioByPrestador(diaPrestadorDto.getCpfPrestador(),
 					diaPrestadorDto.getDia(), horario) == null)
 				horarioVago.add(horario);
@@ -136,6 +131,15 @@ public class AgendamentoService {
 
 	private boolean verificaHorarioComercial(Agendamento agendamento) {
 		// Verifica se o horário é comercial
+		List<LocalTime> horarios = horarioDeFuncionamento();
+
+		if (!horarios.contains(agendamento.getHorario()))
+			return false;
+
+		return true;
+	}
+
+	private List<LocalTime> horarioDeFuncionamento() {
 		final LocalTime horarioInicio = LocalTime.of(8, 0);
 		final LocalTime horarioFim = LocalTime.of(18, 0);
 		final int hourInterval = 1;
@@ -147,10 +151,7 @@ public class AgendamentoService {
 			horarios.add(horario);
 		}
 
-		if (!horarios.contains(agendamento.getHorario()))
-			return false;
-
-		return true;
+		return horarios;
 	}
 
 	private boolean verificaDiaUtil(Agendamento agendamento) {
