@@ -36,17 +36,17 @@ public class AgendamentoService {
 
 	public List<LocalDate> listarHorarioVagoMes(AnoMesDto anoMesDto) {
 
-		if (!validaAnoMesDto(anoMesDto))
+		if (!Common.validaAnoMesDto(anoMesDto))
 			throw new ApiRequestException("Informações inválidas");
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
 
-		LocalTime horarioInicio = LocalTime.of(8, 0);
-		LocalTime horarioFim = LocalTime.of(18, 0);
-		int intervalo = 1;
+		final LocalTime horarioInicio = LocalTime.of(8, 0);
+		final LocalTime horarioFim = LocalTime.of(18, 0);
+		final int intervalo = 1;
 
-		LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
-		LocalDate diaFim = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes() + 1, 1);
+		final LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
+		final LocalDate diaFim = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes() + 1, 1);
 
 		for (LocalDate diaLoop = diaInicio; diaLoop.isBefore(diaFim); diaLoop = diaLoop.plusDays(intervalo)) {
 			horarioLoop: for (LocalTime horarioLoop = horarioInicio; horarioLoop
@@ -65,9 +65,9 @@ public class AgendamentoService {
 
 		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
 
-		LocalTime horarioInicio = LocalTime.of(8, 0);
-		LocalTime horarioFim = LocalTime.of(18, 0);
-		int intervalo = 1;
+		final LocalTime horarioInicio = LocalTime.of(8, 0);
+		final LocalTime horarioFim = LocalTime.of(18, 0);
+		final int intervalo = 1;
 
 		for (LocalTime horario = horarioInicio; horario.isBefore(horarioFim); horario = horario.plusHours(intervalo)) {
 			if (agendamentoRepository.findHorarioByPrestador(diaPrestadorDto.getCpfPrestador(),
@@ -102,7 +102,7 @@ public class AgendamentoService {
 		return agendamentoRepository.findByCpfPrestador(cpfPrestador);
 	}
 
-	public void deletarAgendamento(Agendamento agendamento) {
+	public void cancelarAgendamento(Agendamento agendamento) {
 		if (verificaHorarioCliente(agendamento))
 			throw new ApiRequestException("Agendamento não encontrado");
 
@@ -136,6 +136,7 @@ public class AgendamentoService {
 		final LocalTime horarioInicio = LocalTime.of(8, 0);
 		final LocalTime horarioFim = LocalTime.of(18, 0);
 		final int hourInterval = 1;
+		
 		List<LocalTime> horarios = new ArrayList<LocalTime>();
 
 		for (LocalTime horario = horarioInicio; horario
@@ -182,10 +183,4 @@ public class AgendamentoService {
 		return true;
 	}
 
-	private boolean validaAnoMesDto(AnoMesDto anoMesDto) {
-		// Valida o mês do DTO
-		if (anoMesDto.getMes() < 1 || anoMesDto.getMes() > 12)
-			return false;
-		return true;
-	}
 }

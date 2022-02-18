@@ -1,5 +1,7 @@
 package com.barbearia.service.common;
 
+import com.barbearia.model.dto.AnoMesDto;
+
 public class Common {
 	public static boolean validaCpf(String cpf) {
 		String cpfRegex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
@@ -16,5 +18,12 @@ public class Common {
 		cpf.replace("/", "");
 		cpf.replace(".", "");
 		return cpf;
+	}
+	
+	public static boolean validaAnoMesDto(AnoMesDto anoMesDto) {
+		// Valida o mês do DTO
+		if (anoMesDto.getMes() < 1 || anoMesDto.getMes() > 12)
+			return false;
+		return true;
 	}
 }

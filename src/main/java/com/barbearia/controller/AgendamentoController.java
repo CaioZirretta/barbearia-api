@@ -59,7 +59,7 @@ public class AgendamentoController {
 
 	@DeleteMapping("/cancelar")
 	public ResponseEntity<?> cancelarAgendamento(@RequestBody Agendamento agendamento) {
-		agendamentoService.deletarAgendamento(agendamento);
+		agendamentoService.cancelarAgendamento(agendamento);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
