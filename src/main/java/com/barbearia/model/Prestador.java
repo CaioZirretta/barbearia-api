@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import lombok.Data;
 
 @Data
@@ -15,10 +17,10 @@ import lombok.Data;
 public class Prestador {
 
 	@Id
-	@Column(name = "cpf")
+	@CPF
 	private String cpf;
 	
-	@Column(name = "nome") 
+	@Column(nullable = false) 
 	private String nome;
 
 	public String getCpf() {

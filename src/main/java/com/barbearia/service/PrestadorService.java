@@ -30,18 +30,18 @@ public class PrestadorService {
 	public Prestador adicionar(Prestador prestador) throws ApiRequestException {
 		prestador.setCpf(Utils.formataCpf(prestador.getCpf()));
 
+		if (!Utils.validaCpf(prestador.getCpf()))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
+		
+		if (prestador.getNome().isEmpty())
+			throw new ApiRequestException("O nome não pode estar vazio");
+
 		if (verificaSePrestadorExiste(prestador.getCpf()))
 			throw new ApiRequestException("Prestador já existe!");
 
 		if (clienteRepository.findByCpf(prestador.getCpf()) != null)
 			throw new ApiRequestException("CPF pertence a um cliente");
-
-		if (!Utils.validaCpf(prestador.getCpf()))
-			throw new ApiRequestException(
-					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
-
-		if (prestador.getNome().isEmpty())
-			throw new ApiRequestException("O nome não pode estar vazio");
 
 		return prestadorRepository.save(prestador);
 	}

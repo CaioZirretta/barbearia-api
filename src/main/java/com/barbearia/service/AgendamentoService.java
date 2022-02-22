@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
-import com.barbearia.model.dto.AnoMesDto;
 import com.barbearia.repository.AgendamentoRepository;
 import com.barbearia.service.utils.Utils;
 
@@ -37,16 +36,14 @@ public class AgendamentoService {
 		return agendamentoRepository.findAll();
 	}
 
-	public List<LocalDate> listarHorarioVagoMes(Integer mes, Integer ano) {
+	public List<LocalDate> listarHorarioVagoMes(Integer ano, Integer mes) {
 
-		AnoMesDto anoMesDto = new AnoMesDto(mes, ano);
-		
-		if (!Utils.validaAnoMesDto(anoMesDto))
+		if (!Utils.validaAnoMes(ano, mes))
 			throw new ApiRequestException("Informações inválidas");
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
 
-		final LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
+		final LocalDate diaInicio = LocalDate.of(ano, mes, 1);
 		
 		final LocalDate diaFim = diaInicio.plusMonths(1);
 
