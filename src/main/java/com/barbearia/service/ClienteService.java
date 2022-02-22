@@ -10,7 +10,7 @@ import com.barbearia.model.Cliente;
 import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.common.Common;
+import com.barbearia.service.utils.Utils;
 
 @Service
 public class ClienteService {
@@ -28,7 +28,7 @@ public class ClienteService {
 	}
 
 	public Cliente adicionar(Cliente cliente) throws ApiRequestException {
-		cliente.setCpf(Common.formataCpf(cliente.getCpf()));
+		cliente.setCpf(Utils.formataCpf(cliente.getCpf()));
 
 		if (prestadorRepository.findByCpf(cliente.getCpf()) != null)
 			throw new ApiRequestException("CPF pertence a um prestador");
@@ -36,7 +36,7 @@ public class ClienteService {
 		if (verificaSeClienteExiste(cliente.getCpf()))
 			throw new ApiRequestException("Cliente já existe!");
 
-		if (!Common.validaCpf(cliente.getCpf()))
+		if (!Utils.validaCpf(cliente.getCpf()))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
 
@@ -54,9 +54,9 @@ public class ClienteService {
 	}
 
 	public Cliente alterarCliente(PessoaDto pessoaDto) {
-		pessoaDto.setCpf(Common.formataCpf(pessoaDto.getCpf()));
+		pessoaDto.setCpf(Utils.formataCpf(pessoaDto.getCpf()));
 
-		if (!Common.validaCpf(pessoaDto.getCpf()))
+		if (!Utils.validaCpf(pessoaDto.getCpf()))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
 

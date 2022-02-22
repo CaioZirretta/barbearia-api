@@ -3,6 +3,7 @@ package com.barbearia.service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +13,8 @@ import org.springframework.stereotype.Service;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
 import com.barbearia.model.dto.AnoMesDto;
-import com.barbearia.model.dto.DiaPrestadorDto;
 import com.barbearia.repository.AgendamentoRepository;
-import com.barbearia.service.common.Common;
+import com.barbearia.service.utils.Utils;
 
 @Service
 public class AgendamentoService {
@@ -37,18 +37,22 @@ public class AgendamentoService {
 		return agendamentoRepository.findAll();
 	}
 
-	public List<LocalDate> listarHorarioVagoMes(AnoMesDto anoMesDto) {
+	public List<LocalDate> listarHorarioVagoMes(Integer mes, Integer ano) {
 
-		if (!Common.validaAnoMesDto(anoMesDto))
+		AnoMesDto anoMesDto = new AnoMesDto(mes, ano);
+		
+		if (!Utils.validaAnoMesDto(anoMesDto))
 			throw new ApiRequestException("Informações inválidas");
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
 
 		final LocalDate diaInicio = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes(), 1);
-		final LocalDate diaFim = LocalDate.of(anoMesDto.getAno(), anoMesDto.getMes() + 1, 1);
+		
+		final LocalDate diaFim = diaInicio.plusMonths(1);
 
 		for (LocalDate diaLoop = diaInicio; diaLoop.isBefore(diaFim); diaLoop = diaLoop.plusDays(intervaloDias)) {
-			horarioLoop: for (LocalTime horarioLoop = horarioInicio; horarioLoop
+			horarioLoop: 
+				for (LocalTime horarioLoop = horarioInicio; horarioLoop
 					.isBefore(horarioFim); horarioLoop = horarioLoop.plusHours(intervaloHoras)) {
 				if (agendamentoRepository.findByDiaHorario(diaLoop, horarioLoop) == null) {
 					diasVagos.add(diaLoop);
@@ -60,13 +64,17 @@ public class AgendamentoService {
 		return diasVagos;
 	}
 
-	public List<LocalTime> listarHorarioVagoDiaPrestador(DiaPrestadorDto diaPrestadorDto) {
+	public List<LocalTime> listarHorarioVagoDiaPrestador(String dia, String cpfPrestador) {
 
+		DateTimeFormatter dFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate diaFormatado = LocalDate.parse(dia, dFormatter);
+		
 		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
 
-		for (LocalTime horario = horarioInicio; horario.isBefore(horarioFim); horario = horario.plusHours(intervaloHoras)) {
-			if (agendamentoRepository.findHorarioByPrestador(diaPrestadorDto.getCpfPrestador(),
-					diaPrestadorDto.getDia(), horario) == null)
+		for (LocalTime horario = horarioInicio; 
+				horario.isBefore(horarioFim); 
+				horario = horario.plusHours(intervaloHoras)) {
+			if (agendamentoRepository.findHorarioByPrestador(cpfPrestador, diaFormatado, horario) == null)
 				horarioVago.add(horario);
 		}
 
@@ -77,14 +85,17 @@ public class AgendamentoService {
 	}
 
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
-		Common.validaCpf(cpfCliente);
+		if (!Utils.validaCpf(cpfCliente))
+			throw new ApiRequestException(
+					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
+		
 		if (!clienteService.verificaSeClienteExiste(cpfCliente))
 			throw new ApiRequestException("Cliente não existe");
 		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 
 	public List<Agendamento> procurarPorCpfPrestador(String cpfPrestador) {
-		if (!Common.validaCpf(cpfPrestador))
+		if (!Utils.validaCpf(cpfPrestador))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
 
@@ -106,6 +117,15 @@ public class AgendamentoService {
 	}
 
 	public Agendamento agendar(Agendamento agendamento) {
+		
+		// Verificar se o CPF é válido
+		
+		if(!clienteService.verificaSeClienteExiste(agendamento.getCpfCliente()))
+			throw new ApiRequestException("Cliente não existe");
+		
+		if(!prestadorService.verificaSePrestadorExiste(agendamento.getCpfPrestador()))
+			throw new ApiRequestException("Prestador não existe");
+		
 		if (!verificaHorarioAtual(agendamento))
 			throw new ApiRequestException("Não é possível agendar para datas ou horários passados");
 
@@ -140,14 +160,11 @@ public class AgendamentoService {
 	}
 
 	private List<LocalTime> horarioDeFuncionamento() {
-		final LocalTime horarioInicio = LocalTime.of(8, 0);
-		final LocalTime horarioFim = LocalTime.of(18, 0);
-		final int hourInterval = 1;
 
 		List<LocalTime> horarios = new ArrayList<LocalTime>();
 
 		for (LocalTime horario = horarioInicio; horario
-				.isBefore(horarioFim); horario = horario.plusHours(hourInterval)) {
+				.isBefore(horarioFim); horario = horario.plusHours(intervaloHoras)) {
 			horarios.add(horario);
 		}
 

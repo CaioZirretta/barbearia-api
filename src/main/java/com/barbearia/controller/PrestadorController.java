@@ -31,7 +31,7 @@ public class PrestadorController {
 		return new ResponseEntity<List<Prestador>>(prestadorService.listarTodos(), HttpStatus.OK); 
 	}
 
-	@GetMapping("/detalhar/{cpf}")
+	@GetMapping("/{cpf}")
 	public ResponseEntity<Prestador> detalhar(@PathVariable String cpf) {
 		return new ResponseEntity<Prestador>(prestadorService.detalharPrestador(cpf), HttpStatus.OK);
 	}

@@ -1,1 +1,1 @@
-SELECT * FROM agendamentos WHERE dia = '11/02/2022' AND horario = '16:00' 
+select * from agendamentos where dia='2022-02-16'

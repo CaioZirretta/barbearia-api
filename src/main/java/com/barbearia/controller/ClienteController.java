@@ -31,7 +31,7 @@ public class ClienteController {
 		return new ResponseEntity<List<Cliente>>(clienteService.listarTodos(), HttpStatus.OK); 
 	}
 	
-	@GetMapping("/detalhar/{cpf}")
+	@GetMapping("/{cpf}")
 	public ResponseEntity<Cliente> detalharCliente(@PathVariable String cpf) {
 		return new ResponseEntity<Cliente>(clienteService.detalharCliente(cpf), HttpStatus.OK);
 	}

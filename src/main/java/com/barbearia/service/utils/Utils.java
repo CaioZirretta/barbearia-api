@@ -1,8 +1,8 @@
-package com.barbearia.service.common;
+package com.barbearia.service.utils;
 
 import com.barbearia.model.dto.AnoMesDto;
 
-public class Common {
+public class Utils {
 	public static boolean validaCpf(String cpf) {
 		String cpfRegex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
 
