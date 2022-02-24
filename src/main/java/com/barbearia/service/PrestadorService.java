@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Prestador;
-import com.barbearia.model.dto.PessoaDto;
+import com.barbearia.model.dto.AlteracaoPessoaDto;
+import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.utils.Utils;
@@ -21,29 +23,38 @@ public class PrestadorService {
 	@Autowired
 	private ClienteRepository clienteRepository;
 
+	private final RestTemplate restTemplate;
+	
+	@Autowired
+	public PrestadorService(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+	
 	public List<Prestador> listarTodos() {
 		if(prestadorRepository.findAll() == null)
 			throw new ApiRequestException("Não há prestadores cadastrados");
 		return prestadorRepository.findAll();
 	}
 
-	public Prestador adicionar(Prestador prestador) throws ApiRequestException {
-		prestador.setCpf(Utils.formataCpf(prestador.getCpf()));
+	public Prestador adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
+		novaPessoaDto.setCpf(Utils.formataCpf(novaPessoaDto.getCpf()));
 
-		if (!Utils.validaCpf(prestador.getCpf()))
+		if (!Utils.validaCpf(novaPessoaDto.getCpf()))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
 		
-		if (prestador.getNome().isEmpty())
+		if (novaPessoaDto.getNome().isEmpty())
 			throw new ApiRequestException("O nome não pode estar vazio");
 
-		if (verificaSePrestadorExiste(prestador.getCpf()))
+		if (verificaSePrestadorExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException("Prestador já existe!");
 
-		if (clienteRepository.findByCpf(prestador.getCpf()) != null)
+		if (clienteRepository.findByCpf(novaPessoaDto.getCpf()) != null)
 			throw new ApiRequestException("CPF pertence a um cliente");
 
-		return prestadorRepository.save(prestador);
+		// TODO criar objeto prestador e retornar
+		
+		return null;
 	}
 
 	public Prestador detalharPrestador(String cpf) {
@@ -53,7 +64,7 @@ public class PrestadorService {
 		return prestadorRepository.findByCpf(cpf);
 	}
 
-	public Prestador alterarPrestador(PessoaDto pessoaDto) {
+	public Prestador alterarPrestador(AlteracaoPessoaDto pessoaDto) {
 		pessoaDto.setCpf(Utils.formataCpf(pessoaDto.getCpf()));
 
 		if (!Utils.validaCpf(pessoaDto.getCpf()))

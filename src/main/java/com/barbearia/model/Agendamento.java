@@ -2,9 +2,9 @@ package com.barbearia.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,4 +34,5 @@ public class Agendamento {
 	
 	@Column(name = "cpf_prestador")
 	private String cpfPrestador;
+
 }

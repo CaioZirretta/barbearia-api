@@ -27,13 +27,6 @@ public class AgendamentoService {
 	@Autowired
 	private PrestadorService prestadorService;
 	
-	private final RestTemplate restTemplate;
-	
-	@Autowired
-	public AgendamentoService(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
-	
 	private static final LocalTime horarioInicio = LocalTime.of(8, 0);
 	private static final LocalTime horarioFim = LocalTime.of(18, 0);
 	private static final int intervaloDias = 1;
@@ -153,12 +146,6 @@ public class AgendamentoService {
 		return agendamentoRepository.save(agendamento);
 	}
 
-	public EnderecoBR testeReq(){
-		String url = "https://viacep.com.br/ws/01001000/json/";
-		EnderecoBR endBr = restTemplate.getForObject(url, EnderecoBR.class);
-		return endBr;
-	}
-	
 	// Validação
 
 	private boolean verificaHorarioComercial(Agendamento agendamento) {

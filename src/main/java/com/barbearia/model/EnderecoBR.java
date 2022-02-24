@@ -1,5 +1,7 @@
 package com.barbearia.model;
 
+import javax.persistence.Embeddable;
+
 import com.barbearia.provider.IEndereco;
 
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 public class EnderecoBR implements IEndereco {
 	String cep;
 	String logradouro;

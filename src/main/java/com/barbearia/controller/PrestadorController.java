@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Prestador;
-import com.barbearia.model.dto.PessoaDto;
+import com.barbearia.model.dto.AlteracaoPessoaDto;
+import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.service.PrestadorService;
 
 @RestController
@@ -37,13 +38,13 @@ public class PrestadorController {
 	}
 	
 	@PostMapping("/adicionar")
-	public ResponseEntity<Prestador> adicionar(@RequestBody Prestador prestador)  {
-		return new ResponseEntity<Prestador>(prestadorService.adicionar(prestador), HttpStatus.CREATED);
+	public ResponseEntity<Prestador> adicionar(@RequestBody NovaPessoaDto novaPessoaDto)  {
+		return new ResponseEntity<Prestador>(prestadorService.adicionar(novaPessoaDto), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/alterar")
 	@Transactional
-	public ResponseEntity<Prestador> alterarCliente(@RequestBody PessoaDto pessoaDto) {
+	public ResponseEntity<Prestador> alterarCliente(@RequestBody AlteracaoPessoaDto pessoaDto) {
 		return new ResponseEntity<Prestador>(prestadorService.alterarPrestador(pessoaDto), HttpStatus.OK);
 	}
 

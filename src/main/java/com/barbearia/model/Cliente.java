@@ -1,6 +1,7 @@
 package com.barbearia.model;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -20,5 +21,9 @@ public class Cliente {
 	
 	@Column(nullable = false) 
 	private String nome;
+	
+	
+	@Embedded
+	private EnderecoBR enderecoBr;
 
 }

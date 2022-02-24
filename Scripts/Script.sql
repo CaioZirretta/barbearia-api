@@ -1,1 +1,1 @@
-select * from agendamentos where dia='2022-02-16'
+drop table agendamentos 

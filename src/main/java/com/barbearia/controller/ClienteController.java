@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Cliente;
-import com.barbearia.model.dto.PessoaDto;
+import com.barbearia.model.dto.AlteracaoPessoaDto;
+import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.service.ClienteService;
 
 @RestController
@@ -37,13 +38,13 @@ public class ClienteController {
 	}
 	
 	@PostMapping("/adicionar")
-	public ResponseEntity<Cliente> adicionar(@RequestBody Cliente cliente)  {
-		return new ResponseEntity<Cliente>(clienteService.adicionar(cliente), HttpStatus.CREATED);
+	public ResponseEntity<Cliente> adicionar(@RequestBody NovaPessoaDto novaPessoaDto)  {
+		return new ResponseEntity<Cliente>(clienteService.adicionar(novaPessoaDto), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/alterar")
 	@Transactional
-	public ResponseEntity<Cliente> alterarCliente(@RequestBody PessoaDto pessoaDto) {
+	public ResponseEntity<Cliente> alterarCliente(@RequestBody AlteracaoPessoaDto pessoaDto) {
 		return new ResponseEntity<Cliente>(clienteService.alterarCliente(pessoaDto), HttpStatus.OK);
 	}
 
