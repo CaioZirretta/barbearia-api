@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Agendamento;
+import com.barbearia.model.EnderecoBR;
 import com.barbearia.service.AgendamentoService;
 
 @RestController
@@ -25,7 +26,7 @@ public class AgendamentoController {
 
 	@Autowired
 	private AgendamentoService agendamentoService;
-
+	
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Agendamento>> listarTodos() {
 		return new ResponseEntity<List<Agendamento>>(agendamentoService.listarTodos(), HttpStatus.OK);
@@ -63,6 +64,11 @@ public class AgendamentoController {
 	public ResponseEntity<?> cancelarAgendamento(@RequestBody Agendamento agendamento) {
 		agendamentoService.cancelarAgendamento(agendamento);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@GetMapping("/testereq")
+	public EnderecoBR testeReq() {
+		return agendamentoService.testeReq();
 	}
 
 }
