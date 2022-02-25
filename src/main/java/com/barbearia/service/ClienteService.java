@@ -41,8 +41,7 @@ public class ClienteService {
 		novaPessoaDto.setCpf(Utils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!Utils.validaCpf(novaPessoaDto.getCpf()))
-			throw new ApiRequestException(
-					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
+			throw new ApiRequestException("CPF não é válido.");
 
 		if (novaPessoaDto.getNome().isEmpty())
 			throw new ApiRequestException("O nome não pode estar vazio");
@@ -55,7 +54,7 @@ public class ClienteService {
 
 		if (!validaEndereco(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException("Endereço inválido");
-
+		
 		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),
 				requestEndereco(novaPessoaDto.getCodigoPostal())));
 	}

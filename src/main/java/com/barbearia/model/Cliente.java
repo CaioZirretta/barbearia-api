@@ -6,8 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.br.CPF;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +22,6 @@ public class Cliente {
 	
 	@Column(nullable = false) 
 	private String nome;
-	
 	
 	@Embedded
 	private EnderecoBR enderecoBr;

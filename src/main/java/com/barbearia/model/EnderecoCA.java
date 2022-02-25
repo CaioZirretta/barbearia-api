@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.barbearia.provider.IEndereco;
 
+import lombok.Data;
+
+@Data
 public class EnderecoCA implements IEndereco{
 	List<String> standard;	
 	List<String> disseminationArea;
