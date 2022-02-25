@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Cliente;
+import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.service.ClienteService;
@@ -48,4 +49,8 @@ public class ClienteController {
 		return new ResponseEntity<Cliente>(clienteService.alterarCliente(pessoaDto), HttpStatus.OK);
 	}
 
+	@GetMapping("/externo/{codigoPostal}")
+	public EnderecoBR testeExterno(@PathVariable String codigoPostal) {
+		return null;
+	}
 }

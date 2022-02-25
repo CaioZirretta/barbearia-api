@@ -8,15 +8,18 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "clientes")
 public class Cliente {
 
 	@Id
-	@CPF
 	private String cpf;
 	
 	@Column(nullable = false) 

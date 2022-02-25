@@ -15,8 +15,6 @@ import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.utils.Utils;
 
-import net.bytebuddy.asm.Advice.Thrown;
-
 @Service
 public class ClienteService {
 
@@ -25,17 +23,16 @@ public class ClienteService {
 
 	@Autowired
 	private PrestadorRepository prestadorRepository;
-	
+
 	private final RestTemplate restTemplate;
-	
+
 	@Autowired
 	public ClienteService(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
-	
-	
+
 	public List<Cliente> listarTodos() {
-		if(clienteRepository.findAll() == null)
+		if (clienteRepository.findAll() == null)
 			throw new ApiRequestException("Não há clientes cadastrados");
 		return clienteRepository.findAll();
 	}
@@ -49,17 +46,18 @@ public class ClienteService {
 
 		if (novaPessoaDto.getNome().isEmpty())
 			throw new ApiRequestException("O nome não pode estar vazio");
-		
+
 		if (prestadorRepository.findByCpf(novaPessoaDto.getCpf()) != null)
 			throw new ApiRequestException("CPF pertence a um prestador");
 
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException("Cliente já existe!");
 
-		if(!validaEndereco(novaPessoaDto.getCodigoPostal()))
+		if (!validaEndereco(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException("Endereço inválido");
-		
-		return null;
+
+		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),
+				requestEndereco(novaPessoaDto.getCodigoPostal())));
 	}
 
 	public Cliente detalharCliente(String cpf) {
@@ -97,12 +95,17 @@ public class ClienteService {
 		return false;
 	}
 
-	public boolean validaEndereco(String codigoPostal){
+	public boolean validaEndereco(String codigoPostal) {
 		// TODO validações de endereço
 		// TODO enviar req para retornar endereço
-		
-		String url = "https://viacep.com.br/ws/01001000/json/";
+		if (requestEndereco(codigoPostal).getCep() == null)
+			return false;
+		return true;
+	}
+
+	public EnderecoBR requestEndereco(String codigoPostal) {
+		String url = "https://viacep.com.br/ws/" + codigoPostal + "/json/";
 		EnderecoBR endBr = restTemplate.getForObject(url, EnderecoBR.class);
-		return false;
+		return endBr;
 	}
 }
