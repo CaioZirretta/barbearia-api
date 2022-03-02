@@ -4,16 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
-import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.utils.Utils;
+import com.barbearia.service.utils.CpfUtils;
+import com.barbearia.service.utils.EnderecoUtils;
 
 @Service
 public class ClienteService {
@@ -24,13 +23,8 @@ public class ClienteService {
 	@Autowired
 	private PrestadorRepository prestadorRepository;
 
-	private final RestTemplate restTemplate;
-
-	@Autowired
-	public ClienteService(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
-
+	private EnderecoUtils enderecoUtils;
+	
 	public List<Cliente> listarTodos() {
 		if (clienteRepository.findAll() == null)
 			throw new ApiRequestException("Não há clientes cadastrados");
@@ -38,9 +32,9 @@ public class ClienteService {
 	}
 
 	public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
-		novaPessoaDto.setCpf(Utils.formataCpf(novaPessoaDto.getCpf()));
+		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
-		if (!Utils.validaCpf(novaPessoaDto.getCpf()))
+		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
 			throw new ApiRequestException("CPF não é válido.");
 
 		if (novaPessoaDto.getNome().isEmpty())
@@ -52,11 +46,11 @@ public class ClienteService {
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException("Cliente já existe!");
 
-		if (!validaEndereco(novaPessoaDto.getCodigoPostal()))
+		if (!enderecoUtils.validaEnderecoBR(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException("Endereço inválido");
-		
+
 		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),
-				requestEndereco(novaPessoaDto.getCodigoPostal())));
+				enderecoUtils.requestEnderecoBR(novaPessoaDto.getCodigoPostal())));
 	}
 
 	public Cliente detalharCliente(String cpf) {
@@ -67,9 +61,9 @@ public class ClienteService {
 	}
 
 	public Cliente alterarCliente(AlteracaoPessoaDto pessoaDto) {
-		pessoaDto.setCpf(Utils.formataCpf(pessoaDto.getCpf()));
+		pessoaDto.setCpf(CpfUtils.formataCpf(pessoaDto.getCpf()));
 
-		if (!Utils.validaCpf(pessoaDto.getCpf()))
+		if (!CpfUtils.validaCpf(pessoaDto.getCpf()))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
 
@@ -94,17 +88,4 @@ public class ClienteService {
 		return false;
 	}
 
-	public boolean validaEndereco(String codigoPostal) {
-		// TODO validações de endereço
-		// TODO enviar req para retornar endereço
-		if (requestEndereco(codigoPostal).getCep() == null)
-			return false;
-		return true;
-	}
-
-	public EnderecoBR requestEndereco(String codigoPostal) {
-		String url = "https://viacep.com.br/ws/" + codigoPostal + "/json/";
-		EnderecoBR endBr = restTemplate.getForObject(url, EnderecoBR.class);
-		return endBr;
-	}
 }

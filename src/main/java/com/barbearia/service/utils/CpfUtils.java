@@ -1,8 +1,6 @@
 package com.barbearia.service.utils;
 
-import java.util.InputMismatchException;
-
-public class Utils {
+public class CpfUtils {
 	public static boolean validaCpf(String cpf) {
 		String cpfRegex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
 

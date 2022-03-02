@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Cliente;
-import com.barbearia.model.EnderecoBR;
+import com.barbearia.model.EnderecoCA;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.service.ClienteService;
+import com.barbearia.service.utils.EnderecoUtils;
 
 @RestController
 @RequestMapping("/clientes")
@@ -27,6 +28,8 @@ public class ClienteController {
 	
 	@Autowired
 	private ClienteService clienteService;
+	
+	private EnderecoUtils enderecoUtils = new EnderecoUtils();
 	
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Cliente>> listarTodos(){
@@ -49,8 +52,8 @@ public class ClienteController {
 		return new ResponseEntity<Cliente>(clienteService.alterarCliente(pessoaDto), HttpStatus.OK);
 	}
 
-	@GetMapping("/externo/{codigoPostal}")
-	public EnderecoBR testeExterno(@PathVariable String codigoPostal) {
-		return null;
+	@GetMapping("/teste/{codigoPostal}")
+	public ResponseEntity<EnderecoCA> testeExterno(@PathVariable String codigoPostal) {
+		return new ResponseEntity<EnderecoCA>(enderecoUtils.requestEnderecoCA(codigoPostal), HttpStatus.OK);
 	}
 }

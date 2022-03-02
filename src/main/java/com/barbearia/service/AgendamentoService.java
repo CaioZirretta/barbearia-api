@@ -9,13 +9,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
-import com.barbearia.model.EnderecoBR;
 import com.barbearia.repository.AgendamentoRepository;
-import com.barbearia.service.utils.Utils;
+import com.barbearia.service.utils.CpfUtils;
 
 @Service
 public class AgendamentoService {
@@ -40,7 +38,7 @@ public class AgendamentoService {
 
 	public List<LocalDate> listarHorarioVagoMes(Integer ano, Integer mes) {
 
-		if (!Utils.validaAnoMes(ano, mes))
+		if (!CpfUtils.validaAnoMes(ano, mes))
 			throw new ApiRequestException("Informações inválidas");
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
@@ -84,7 +82,7 @@ public class AgendamentoService {
 	}
 
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
-		if (!Utils.validaCpf(cpfCliente))
+		if (!CpfUtils.validaCpf(cpfCliente))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
 		
@@ -94,7 +92,7 @@ public class AgendamentoService {
 	}
 
 	public List<Agendamento> procurarPorCpfPrestador(String cpfPrestador) {
-		if (!Utils.validaCpf(cpfPrestador))
+		if (!CpfUtils.validaCpf(cpfPrestador))
 			throw new ApiRequestException(
 					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
 
@@ -145,6 +143,7 @@ public class AgendamentoService {
 
 		return agendamentoRepository.save(agendamento);
 	}
+
 
 	// Validação
 
@@ -210,5 +209,4 @@ public class AgendamentoService {
 			return false;
 		return true;
 	}
-
 }

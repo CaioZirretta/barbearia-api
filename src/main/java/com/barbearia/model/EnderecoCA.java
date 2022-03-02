@@ -1,16 +1,18 @@
 package com.barbearia.model;
 
-import java.util.List;
+import java.util.HashMap;
 
-import com.barbearia.provider.IEndereco;
+import com.barbearia.service.factory.IEndereco;
 
 import lombok.Data;
 
 @Data
 public class EnderecoCA implements IEndereco{
-	List<String> standard;	
-	List<String> disseminationArea;
-	String longt;
+
+	String city;
+	String prov;
+	String stnumber;
+	String staddress;
 	String postal;
-	String latt;
+	
 }

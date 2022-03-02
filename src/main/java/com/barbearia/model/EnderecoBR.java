@@ -2,7 +2,7 @@ package com.barbearia.model;
 
 import javax.persistence.Embeddable;
 
-import com.barbearia.provider.IEndereco;
+import com.barbearia.service.factory.IEndereco;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
