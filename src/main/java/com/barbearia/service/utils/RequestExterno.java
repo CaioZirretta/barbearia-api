@@ -1,30 +1,22 @@
-package com.barbearia.service.factory;
+package com.barbearia.service.utils;
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.EnderecoCA;
 
 public class RequestExterno {
-	// TODO static ou normal, eis a questão
-	// static não tem Autowired, porém não dá pra instanciar manualmente
 	
-	private RestTemplate restTemplate;
+	private static RestTemplate restTemplate = new RestTemplate();
 
-	@Autowired
-	public RequestExterno(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
-
-	public EnderecoBR requestEnderecoBR(String codigoPostal) {
+	public static EnderecoBR requestEnderecoBR(String codigoPostal) {
 		String url = "https://viacep.com.br/ws/" + codigoPostal + "/json/";
 		EnderecoBR endBr = restTemplate.getForObject(url, EnderecoBR.class);
 		return endBr;
 	}
 
-	public EnderecoCA requestEnderecoCA(String codigoPostal) {
+	public static EnderecoCA requestEnderecoCA(String codigoPostal) {
 		
 		String url = "https://geocoder.ca/" + codigoPostal + "?json=1";
 		

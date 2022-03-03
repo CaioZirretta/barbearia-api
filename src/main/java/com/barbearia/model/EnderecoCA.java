@@ -1,18 +1,21 @@
 package com.barbearia.model;
 
-import java.util.HashMap;
+import javax.persistence.Embeddable;
 
 import com.barbearia.service.factory.IEndereco;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class EnderecoCA implements IEndereco{
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Embeddable
+public class EnderecoCA implements IEndereco {
 	String city;
 	String prov;
 	String stnumber;
 	String staddress;
 	String postal;
-	
 }

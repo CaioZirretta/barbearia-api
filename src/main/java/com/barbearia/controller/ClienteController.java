@@ -20,7 +20,9 @@ import com.barbearia.model.EnderecoCA;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.service.ClienteService;
-import com.barbearia.service.utils.EnderecoUtils;
+import com.barbearia.service.factory.EnderecoFactory;
+import com.barbearia.service.factory.IEndereco;
+import com.barbearia.service.utils.RequestExterno;
 
 @RestController
 @RequestMapping("/clientes")
@@ -28,8 +30,6 @@ public class ClienteController {
 	
 	@Autowired
 	private ClienteService clienteService;
-	
-	private EnderecoUtils enderecoUtils = new EnderecoUtils();
 	
 	@GetMapping("/listar/todos")
 	public ResponseEntity<List<Cliente>> listarTodos(){
@@ -53,7 +53,7 @@ public class ClienteController {
 	}
 
 	@GetMapping("/teste/{codigoPostal}")
-	public ResponseEntity<EnderecoCA> testeExterno(@PathVariable String codigoPostal) {
-		return new ResponseEntity<EnderecoCA>(enderecoUtils.requestEnderecoCA(codigoPostal), HttpStatus.OK);
+	public ResponseEntity<Cliente> testeExterno(@PathVariable String codigoPostal) {
+		return new ResponseEntity<Cliente>(clienteService.testeIEndereco(codigoPostal), HttpStatus.OK);
 	}
 }

@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class EnderecoBR implements IEndereco {
 	String cep;
-	String logradouro;
-	String complemento;
-	String bairro;
-	String localidade;
 	String uf;
-	String ibge;
-	String gia;
-	String ddd;
-	String siafi;
+	String bairro;
+	String logradouro;
+	String localidade;
+	String complemento;
+	// String ibge;
+	// String gia;
+	// String ddd;
+	// String siafi;
 }

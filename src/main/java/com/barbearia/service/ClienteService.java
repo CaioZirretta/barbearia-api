@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
+import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
+import com.barbearia.service.factory.EnderecoFactory;
+import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.CpfUtils;
 import com.barbearia.service.utils.EnderecoUtils;
+import com.barbearia.service.utils.RequestExterno;
 
 @Service
 public class ClienteService {
@@ -23,8 +27,6 @@ public class ClienteService {
 	@Autowired
 	private PrestadorRepository prestadorRepository;
 
-	private EnderecoUtils enderecoUtils;
-	
 	public List<Cliente> listarTodos() {
 		if (clienteRepository.findAll() == null)
 			throw new ApiRequestException("Não há clientes cadastrados");
@@ -46,11 +48,11 @@ public class ClienteService {
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException("Cliente já existe!");
 
-		if (!enderecoUtils.validaEnderecoBR(novaPessoaDto.getCodigoPostal()))
+		if (!EnderecoUtils.validaEnderecoCA(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException("Endereço inválido");
 
 		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),
-				enderecoUtils.requestEnderecoBR(novaPessoaDto.getCodigoPostal())));
+				RequestExterno.requestEnderecoCA(novaPessoaDto.getCodigoPostal())));
 	}
 
 	public Cliente detalharCliente(String cpf) {
@@ -80,6 +82,13 @@ public class ClienteService {
 
 		return cliente;
 	}
+	
+	public Cliente testeIEndereco(String codigoPostal) {
+		Cliente teste = new Cliente();
+		IEndereco endereco = EnderecoFactory.enderecoFactory(codigoPostal);
+		teste.setEndereco(endereco);
+		return teste;
+	}
 
 	public boolean verificaSeClienteExiste(String cpf) {
 		// Verifica se o cliente já existe
@@ -87,5 +96,6 @@ public class ClienteService {
 			return true;
 		return false;
 	}
+
 
 }

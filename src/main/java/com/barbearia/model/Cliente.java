@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.barbearia.service.factory.IEndereco;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,6 @@ public class Cliente {
 	private String nome;
 	
 	@Embedded
-	private EnderecoBR enderecoBr;
+	private IEndereco endereco;
 
 }
