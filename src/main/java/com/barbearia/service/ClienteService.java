@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
-import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
@@ -34,6 +33,12 @@ public class ClienteService {
 	}
 
 	public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
+
+		IEndereco endereco = RequestExterno.requestEndereco(EnderecoFactory.enderecoFactory(novaPessoaDto.getCodigoPostal()), novaPessoaDto.getCodigoPostal());
+
+		if (!EnderecoUtils.validaEndereco(endereco))
+			throw new ApiRequestException("Endereço inválido.");
+
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
@@ -48,11 +53,7 @@ public class ClienteService {
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException("Cliente já existe!");
 
-		if (!EnderecoUtils.validaEnderecoCA(novaPessoaDto.getCodigoPostal()))
-			throw new ApiRequestException("Endereço inválido");
-
-		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),
-				RequestExterno.requestEnderecoCA(novaPessoaDto.getCodigoPostal())));
+		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), endereco));
 	}
 
 	public Cliente detalharCliente(String cpf) {

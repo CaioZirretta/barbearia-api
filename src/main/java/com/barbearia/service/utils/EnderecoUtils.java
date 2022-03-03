@@ -1,19 +1,21 @@
 package com.barbearia.service.utils;
 
-import lombok.Data;
+import com.barbearia.model.EnderecoBR;
+import com.barbearia.model.EnderecoCA;
+import com.barbearia.service.factory.IEndereco;
 
-@Data
 public class EnderecoUtils {
-	public static boolean validaEnderecoBR(String codigoPostal) {
-		if (RequestExterno.requestEnderecoBR(codigoPostal).getCep() == null)
-			return false;
-		return true;
-	}
+	public static boolean validaEndereco(IEndereco endereco) {
+		if (endereco instanceof EnderecoBR) {
+			if (((EnderecoBR) endereco).getCep() == null)
+				return false;
+		}
 
-	public static boolean validaEnderecoCA(String codigoPostal) {
-		if (RequestExterno.requestEnderecoCA(codigoPostal).getPostal() == null)
-			return false;
+		if (endereco instanceof EnderecoCA) {
+			if (((EnderecoCA) endereco).getPostal() == null)
+				return false;
+		}
+		
 		return true;
 	}
-	
 }

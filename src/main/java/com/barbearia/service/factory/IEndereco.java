@@ -1,5 +1,5 @@
 package com.barbearia.service.factory;
 
-public interface IEndereco {
+public interface IEndereco{
 	
 }
