@@ -34,7 +34,8 @@ public class ClienteService {
 
 	public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
 
-		IEndereco endereco = RequestExterno.requestEndereco(EnderecoFactory.enderecoFactory(novaPessoaDto.getCodigoPostal()), novaPessoaDto.getCodigoPostal());
+		IEndereco endereco = RequestExterno.requestEndereco(
+				EnderecoFactory.enderecoFactory(novaPessoaDto.getCodigoPostal()), novaPessoaDto.getCodigoPostal());
 
 		if (!EnderecoUtils.validaEndereco(endereco))
 			throw new ApiRequestException("Endereço inválido.");
@@ -84,13 +85,8 @@ public class ClienteService {
 		return cliente;
 	}
 	
-	public Cliente testeIEndereco(String codigoPostal) {
-		Cliente teste = new Cliente();
-		IEndereco endereco = EnderecoFactory.enderecoFactory(codigoPostal);
-		teste.setEndereco(endereco);
-		return teste;
-	}
-
+	// Validações
+	
 	public boolean verificaSeClienteExiste(String cpf) {
 		// Verifica se o cliente já existe
 		if (clienteRepository.findByCpf(cpf) != null)

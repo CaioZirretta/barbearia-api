@@ -8,9 +8,15 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import com.barbearia.service.factory.IEndereco;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "prestadores")
 public class Prestador {
@@ -23,6 +29,6 @@ public class Prestador {
 	private String nome;
 	
 	@Embedded
-	private EnderecoBR enderecoBr;
+	private IEndereco endereco;
 
 }
