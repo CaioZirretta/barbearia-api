@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
@@ -28,7 +29,7 @@ public class ClienteService {
 
 	public List<Cliente> listarTodos() {
 		if (clienteRepository.findAll() == null)
-			throw new ApiRequestException("Não há clientes cadastrados");
+			throw new ApiRequestException(MensagensPessoas.TABELA_CLIENTES_VAZIA.getMensagem());
 		return clienteRepository.findAll();
 	}
 
@@ -43,23 +44,23 @@ public class ClienteService {
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
-			throw new ApiRequestException("CPF não é válido.");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (novaPessoaDto.getNome().isEmpty())
-			throw new ApiRequestException("O nome não pode estar vazio");
+			throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
 		if (prestadorRepository.findByCpf(novaPessoaDto.getCpf()) != null)
-			throw new ApiRequestException("CPF pertence a um prestador");
+			throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
 
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
-			throw new ApiRequestException("Cliente já existe!");
+			throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
 		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), endereco));
 	}
 
 	public Cliente detalharCliente(String cpf) {
 		if (!verificaSeClienteExiste(cpf))
-			throw new ApiRequestException("Cliente não existe");
+			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 
 		return clienteRepository.findByCpf(cpf);
 	}
@@ -68,14 +69,13 @@ public class ClienteService {
 		pessoaDto.setCpf(CpfUtils.formataCpf(pessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(pessoaDto.getCpf()))
-			throw new ApiRequestException(
-					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (!verificaSeClienteExiste(pessoaDto.getCpf()))
-			throw new ApiRequestException("Cliente não existe");
+			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 
 		if (pessoaDto.getNomeNovo().isEmpty())
-			throw new ApiRequestException("O nome não pode estar vazio");
+			throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
 		Cliente cliente = clienteRepository.findByCpf(pessoaDto.getCpf());
 
@@ -84,15 +84,14 @@ public class ClienteService {
 
 		return cliente;
 	}
-	
+
 	// Validações
-	
+
 	public boolean verificaSeClienteExiste(String cpf) {
 		// Verifica se o cliente já existe
 		if (clienteRepository.findByCpf(cpf) != null)
 			return true;
 		return false;
 	}
-
 
 }

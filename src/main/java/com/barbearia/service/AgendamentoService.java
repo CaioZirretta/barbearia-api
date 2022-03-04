@@ -10,6 +10,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.barbearia.enums.MensagensAgendamento;
+import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
 import com.barbearia.repository.AgendamentoRepository;
@@ -32,14 +34,14 @@ public class AgendamentoService {
 
 	public List<Agendamento> listarTodos() {
 		if (agendamentoRepository.findCount() == 0)
-			throw new ApiRequestException("Não existem agendamentos marcados");
+			throw new ApiRequestException(MensagensAgendamento.TABELA_AGENDAMENTO_VAZIA.getMensagem());
 		return agendamentoRepository.findAll();
 	}
 
 	public List<LocalDate> listarHorarioVagoMes(Integer ano, Integer mes) {
 
 		if (!CpfUtils.validaAnoMes(ano, mes))
-			throw new ApiRequestException("Informações inválidas");
+			throw new ApiRequestException(MensagensAgendamento.ANO_MES_INVALIDOS.getMensagem());
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
 
@@ -76,38 +78,36 @@ public class AgendamentoService {
 		}
 
 		if (horarioVago.isEmpty())
-			throw new ApiRequestException("Não há horários vagos no dia selecionado");
+			throw new ApiRequestException(MensagensAgendamento.HORARIO_OCUPADO.getMensagem());
 
 		return horarioVago;
 	}
 
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
 		if (!CpfUtils.validaCpf(cpfCliente))
-			throw new ApiRequestException(
-					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 		
 		if (!clienteService.verificaSeClienteExiste(cpfCliente))
-			throw new ApiRequestException("Cliente não existe");
+			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 
 	public List<Agendamento> procurarPorCpfPrestador(String cpfPrestador) {
 		if (!CpfUtils.validaCpf(cpfPrestador))
-			throw new ApiRequestException(
-					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (!prestadorService.verificaSePrestadorExiste(cpfPrestador))
-			throw new ApiRequestException("Prestador não encontrado");
+			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
 
 		if (agendamentoRepository.findByCpfCliente(cpfPrestador) == null)
-			throw new ApiRequestException("Não foram encontrados agendamentos para este cliente");
+			throw new ApiRequestException(MensagensAgendamento.CLIENTE_SEM_AGENDAMENTO.getMensagem());
 
 		return agendamentoRepository.findByCpfPrestador(cpfPrestador);
 	}
 
 	public void cancelarAgendamento(Agendamento agendamento) {
 		if (verificaHorarioCliente(agendamento))
-			throw new ApiRequestException("Agendamento não encontrado");
+			throw new ApiRequestException(MensagensAgendamento.AGENDAMENTO_NAO_ENCONTRADO.getMensagem());
 
 		agendamentoRepository.deleteByDiaHorarioCliente(agendamento.getCpfCliente(), agendamento.getCpfPrestador(),
 				agendamento.getDia(), agendamento.getHorario());
@@ -118,28 +118,28 @@ public class AgendamentoService {
 		// Verificar se o CPF é válido
 		
 		if(!clienteService.verificaSeClienteExiste(agendamento.getCpfCliente()))
-			throw new ApiRequestException("Cliente não existe");
+			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 		
 		if(!prestadorService.verificaSePrestadorExiste(agendamento.getCpfPrestador()))
-			throw new ApiRequestException("Prestador não existe");
+			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
 		
 		if (!verificaHorarioAtual(agendamento))
-			throw new ApiRequestException("Não é possível agendar para datas ou horários passados");
+			throw new ApiRequestException(MensagensAgendamento.HORARIO_FUTURO_INVALIDO.getMensagem());
 
 		if (!verificaHorarioComercial(agendamento))
-			throw new ApiRequestException("Horário inválido. Horários disponíveis entre 8 e 17.");
+			throw new ApiRequestException(MensagensAgendamento.HORARIO_NAO_COMERCIAL.getMensagem());
 
 		if (!verificaDiaUtil(agendamento))
-			throw new ApiRequestException("Data inválida. Sábados e domingos não funcionam.");
+			throw new ApiRequestException(MensagensAgendamento.DATA_NAO_UTIL.getMensagem());
 
 		if (!verificaDiaCliente(agendamento))
-			throw new ApiRequestException("Cliente já possui horário marcado no dia.");
+			throw new ApiRequestException(MensagensAgendamento.CLIENTE_HORARIO_OCUPADO_DIA.getMensagem());
 
 		if (!verificaHorarioCliente(agendamento))
-			throw new ApiRequestException("Horário não disponível para o cliente.");
+			throw new ApiRequestException(MensagensAgendamento.CLIENTE_HORARIO_OCUPADO.getMensagem());
 
 		if (!verificaHorarioPrestador(agendamento))
-			throw new ApiRequestException("Horário não disponível para o prestador.");
+			throw new ApiRequestException(MensagensAgendamento.PRESTADOR_HORARIO_OCUPADO.getMensagem());
 
 		return agendamentoRepository.save(agendamento);
 	}

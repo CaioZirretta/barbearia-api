@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Prestador;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
@@ -28,7 +29,7 @@ public class PrestadorService {
 
 	public List<Prestador> listarTodos() {
 		if(prestadorRepository.findAll() == null)
-			throw new ApiRequestException("Não há prestadores cadastrados");
+			throw new ApiRequestException(MensagensPessoas.TABELA_PRESTADORES_VAZIA.getMensagem());
 		return prestadorRepository.findAll();
 	}
 
@@ -42,17 +43,16 @@ public class PrestadorService {
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
-			throw new ApiRequestException(
-					"CPF não é válido.");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 		
 		if (novaPessoaDto.getNome().isEmpty())
-			throw new ApiRequestException("O nome não pode estar vazio");
+			throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
 		if (verificaSePrestadorExiste(novaPessoaDto.getCpf()))
-			throw new ApiRequestException("Prestador já existe!");
+			throw new ApiRequestException(MensagensPessoas.PRESTADOR_JA_EXISTE.getMensagem());
 
 		if (clienteRepository.findByCpf(novaPessoaDto.getCpf()) != null)
-			throw new ApiRequestException("CPF pertence a um cliente");
+			throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
 
 		
 		return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), endereco));
@@ -60,7 +60,7 @@ public class PrestadorService {
 
 	public Prestador detalharPrestador(String cpf) {
 		if (!verificaSePrestadorExiste(cpf))
-			throw new ApiRequestException("Prestador não existe");
+			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
 
 		return prestadorRepository.findByCpf(cpf);
 	}
@@ -69,14 +69,13 @@ public class PrestadorService {
 		pessoaDto.setCpf(CpfUtils.formataCpf(pessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(pessoaDto.getCpf()))
-			throw new ApiRequestException(
-					"CPF não é válido. Formatos aceitos: 00000000000, 00000000000000, 000.000.000-00, 00.000.000/0000-00, 000000000-00 e 00000000/0000-00 ");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (!verificaSePrestadorExiste(pessoaDto.getCpf()))
-			throw new ApiRequestException("Prestador não existe");
+			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
 
 		if (pessoaDto.getNomeNovo().isEmpty())
-			throw new ApiRequestException("O nome não pode estar vazio");
+			throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
 		Prestador prestador = prestadorRepository.findByCpf(pessoaDto.getCpf());
 
