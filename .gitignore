@@ -20,3 +20,4 @@ target/
 /readme.md
 Scripts/Script.sql
 *.sql
+src/main/resources/application.properties

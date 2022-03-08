@@ -5,7 +5,8 @@ import com.barbearia.model.EnderecoCA;
 
 public class EnderecoFactory {
 	public static IEndereco enderecoFactory(String pais) {
-		
+		pais = pais.toUpperCase();
+
 		switch (pais) {
 		case "BR":
 			return new EnderecoBR();

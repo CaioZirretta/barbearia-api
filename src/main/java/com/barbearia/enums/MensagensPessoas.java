@@ -10,7 +10,8 @@ public enum MensagensPessoas {
 	CLIENTE_JA_EXISTE("O cliente já foi cadastrado"),
 	PRESTADOR_JA_EXISTE("O prestador já foi cadastrado"),
 	CLIENTE_NAO_EXISTE("Cliente não cadastrado"),
-	PRESTADOR_NAO_EXISTE("Prestador não cadastrado");
+	PRESTADOR_NAO_EXISTE("Prestador não cadastrado"),
+	CODIGO_POSTAL_INVALIDO("Código postal inválido");
 	
 	private String mensagem;
 	

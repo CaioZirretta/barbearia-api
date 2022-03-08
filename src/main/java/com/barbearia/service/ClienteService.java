@@ -14,9 +14,8 @@ import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.factory.EnderecoFactory;
-import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.CpfUtils;
+import com.barbearia.service.utils.EnderecoUtils;
 
 @Service
 public class ClienteService {
@@ -34,10 +33,13 @@ public class ClienteService {
 	}
 
 	public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
+		if (!EnderecoUtils.validaEndereco(novaPessoaDto.getCodigoPostal()))
+			throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
 
-		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
-		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal()); 
+		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
 		
+		String pais = EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem());
+
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
@@ -52,7 +54,7 @@ public class ClienteService {
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
-		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),enderecoDto));
+		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
 	}
 
 	public Cliente detalharCliente(String cpf) {
@@ -61,8 +63,8 @@ public class ClienteService {
 
 		return clienteRepository.findByCpf(cpf);
 	}
-	
-	public List<Prestador> procurarPrestadores(String codigoPostal){
+
+	public List<Prestador> procurarPrestadores(String codigoPostal) {
 		return prestadorRepository.findAllByPostal(codigoPostal);
 	}
 
