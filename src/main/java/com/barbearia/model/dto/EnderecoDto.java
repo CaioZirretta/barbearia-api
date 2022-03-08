@@ -1,8 +1,7 @@
 package com.barbearia.model.dto;
 
-import java.util.HashMap;
-
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 
 import lombok.Data;
 
@@ -18,6 +17,7 @@ public class EnderecoDto {
 	String complemento;
 	
 	// Endereço CA
-	HashMap<Object, Object> standard;
+	@Embedded
+	StandardDto standard;
 	String postal;
 }

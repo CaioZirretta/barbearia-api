@@ -27,7 +27,7 @@ public class ClienteService {
 	private PrestadorRepository prestadorRepository;
 
 	public List<Cliente> listarTodos() {
-		if (clienteRepository.findAll() == null)
+		if (clienteRepository.findAll().isEmpty())
 			throw new ApiRequestException(MensagensPessoas.TABELA_CLIENTES_VAZIA.getMensagem());
 		return clienteRepository.findAll();
 	}
