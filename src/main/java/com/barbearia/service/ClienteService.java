@@ -54,7 +54,11 @@ public class ClienteService {
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
-		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
+		try {
+			return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
+		} catch (org.springframework.transaction.TransactionSystemException e) {
+			throw new ApiRequestException("CPF inválido");
+		}
 	}
 
 	public Cliente detalharCliente(String cpf) {

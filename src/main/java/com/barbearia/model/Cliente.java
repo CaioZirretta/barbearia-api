@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import com.barbearia.model.dto.EnderecoDto;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Cliente {
 
 	@Id
-	// @CPF
+	@CPF
 	private String cpf;
 	
 	@Column(nullable = false) 
