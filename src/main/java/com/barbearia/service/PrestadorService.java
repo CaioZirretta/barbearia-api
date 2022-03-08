@@ -52,8 +52,11 @@ public class PrestadorService {
 
 		if (clienteRepository.findByCpf(novaPessoaDto.getCpf()) != null)
 			throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
-
-		return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
+		try {
+			return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
+		} catch (org.springframework.transaction.TransactionSystemException e) {
+			throw new ApiRequestException("CPF inválido");
+		}
 	}
 
 	public Prestador detalharPrestador(String cpf) {
