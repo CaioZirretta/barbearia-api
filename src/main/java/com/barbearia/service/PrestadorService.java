@@ -13,9 +13,8 @@ import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.factory.EnderecoFactory;
-import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.CpfUtils;
+import com.barbearia.service.utils.EnderecoUtils;
 
 @Service
 public class PrestadorService {
@@ -27,21 +26,24 @@ public class PrestadorService {
 	private ClienteRepository clienteRepository;
 
 	public List<Prestador> listarTodos() {
-		if(prestadorRepository.findAll() == null)
+		if (prestadorRepository.findAll() == null)
 			throw new ApiRequestException(MensagensPessoas.TABELA_PRESTADORES_VAZIA.getMensagem());
 		return prestadorRepository.findAll();
 	}
 
 	public Prestador adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
-		
-		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
-		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal()); 
-		
+		if (!EnderecoUtils.validaEndereco(novaPessoaDto.getCodigoPostal()))
+			throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
+
+		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
+
+		String pais = EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem());
+
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
 			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
-		
+
 		if (novaPessoaDto.getNome().isEmpty())
 			throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
@@ -51,8 +53,7 @@ public class PrestadorService {
 		if (clienteRepository.findByCpf(novaPessoaDto.getCpf()) != null)
 			throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
 
-		
-		return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), enderecoDto));
+		return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
 	}
 
 	public Prestador detalharPrestador(String cpf) {

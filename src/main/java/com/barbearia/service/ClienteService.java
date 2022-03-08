@@ -37,7 +37,7 @@ public class ClienteService {
 			throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
 
 		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
-		
+
 		String pais = EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem());
 
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));

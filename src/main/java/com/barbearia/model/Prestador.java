@@ -26,6 +26,9 @@ public class Prestador {
 	@Column(nullable = false) 
 	private String nome;
 	
+	@Column
+	private String pais;
+	
 	@Embedded
 	private EnderecoDto endereco;
 
