@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Cliente;
+import com.barbearia.model.EnderecoBR;
+import com.barbearia.model.Prestador;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
+import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.service.ClienteService;
 
@@ -37,6 +40,11 @@ public class ClienteController {
 		return new ResponseEntity<Cliente>(clienteService.detalharCliente(cpf), HttpStatus.OK);
 	}
 
+	@GetMapping("/prestadores/{codigoPostal}")
+	public ResponseEntity<List<Prestador>> procurarPrestadores(@PathVariable String codigoPostal){
+		return new ResponseEntity<List<Prestador>>(clienteService.procurarPrestadores(codigoPostal), HttpStatus.OK);
+	}
+	
 	@PostMapping("/adicionar")
 	public ResponseEntity<Cliente> adicionar(@RequestBody NovaPessoaDto novaPessoaDto) {
 		return new ResponseEntity<Cliente>(clienteService.adicionar(novaPessoaDto), HttpStatus.CREATED);
@@ -46,5 +54,10 @@ public class ClienteController {
 	@Transactional
 	public ResponseEntity<Cliente> alterarCliente(@RequestBody AlteracaoPessoaDto pessoaDto) {
 		return new ResponseEntity<Cliente>(clienteService.alterarCliente(pessoaDto), HttpStatus.OK);
+	}
+	
+	@GetMapping("/teste/{postal}")
+	public ResponseEntity<EnderecoDto> teste(@PathVariable String postal){
+		return new ResponseEntity<EnderecoDto>((new EnderecoBR()).requestEndereco(postal), HttpStatus.OK);
 	}
 }

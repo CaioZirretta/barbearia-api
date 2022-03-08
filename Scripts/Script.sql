@@ -1,1 +1,1 @@
-drop table agendamentos 
+delete from clientes 

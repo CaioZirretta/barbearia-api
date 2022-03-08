@@ -1,22 +1,29 @@
 package com.barbearia.model;
 
-import javax.persistence.Embeddable;
+import java.util.HashMap;
 
+import com.barbearia.exception.ApiRequestException;
+import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.service.factory.IEndereco;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.barbearia.service.utils.RequestExterno;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Embeddable
 public class EnderecoCA implements IEndereco {
-	String city;
-	String prov;
+
+	HashMap<Object, Object> standard;
 	String stnumber;
 	String staddress;
 	String postal;
+
+	public EnderecoDto requestEndereco(String codigoPostal) {
+		String url = "https://geocoder.ca/" + codigoPostal + "?json=1";
+		EnderecoDto endereco = RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
+
+		if (endereco.getPostal() == null)
+			throw new ApiRequestException("Formato inválido da resposta");
+
+		return endereco;
+	}
 }

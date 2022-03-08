@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.barbearia.service.factory.IEndereco;
+import com.barbearia.model.dto.EnderecoDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,12 +20,13 @@ import lombok.NoArgsConstructor;
 public class Cliente {
 
 	@Id
+	// @CPF
 	private String cpf;
 	
 	@Column(nullable = false) 
 	private String nome;
 	
 	@Embedded
-	private IEndereco endereco;
+	private EnderecoDto endereco;
 
 }

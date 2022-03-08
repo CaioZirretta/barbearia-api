@@ -2,9 +2,7 @@ package com.barbearia.service.utils;
 
 public class CpfUtils {
 	public static boolean validaCpf(String cpf) {
-		String cpfRegex = "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})";
-
-		if (cpf.isEmpty() || cpf.isBlank() || !cpf.matches(cpfRegex))
+		if (cpf.isEmpty() || cpf.isBlank() || !cpf.matches(RegexUtils.cpfRegex))
 			return false;
 		/*
 		char dig10, dig11;

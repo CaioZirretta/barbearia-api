@@ -9,14 +9,13 @@ import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Prestador;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
+import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.factory.EnderecoFactory;
 import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.CpfUtils;
-import com.barbearia.service.utils.EnderecoUtils;
-import com.barbearia.service.utils.RequestExterno;
 
 @Service
 public class PrestadorService {
@@ -34,11 +33,9 @@ public class PrestadorService {
 	}
 
 	public Prestador adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
-		IEndereco endereco = RequestExterno.requestEndereco(
-				EnderecoFactory.enderecoFactory(novaPessoaDto.getCodigoPostal()), novaPessoaDto.getCodigoPostal());
-
-		if (!EnderecoUtils.validaEndereco(endereco))
-			throw new ApiRequestException("Endereço inválido.");
+		
+		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
+		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal()); 
 		
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
@@ -55,7 +52,7 @@ public class PrestadorService {
 			throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
 
 		
-		return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), endereco));
+		return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), enderecoDto));
 	}
 
 	public Prestador detalharPrestador(String cpf) {

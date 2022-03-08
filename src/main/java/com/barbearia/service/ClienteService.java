@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
+import com.barbearia.model.Prestador;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
+import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.factory.EnderecoFactory;
 import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.CpfUtils;
-import com.barbearia.service.utils.EnderecoUtils;
-import com.barbearia.service.utils.RequestExterno;
 
 @Service
 public class ClienteService {
@@ -35,12 +35,9 @@ public class ClienteService {
 
 	public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
 
-		IEndereco endereco = RequestExterno.requestEndereco(
-				EnderecoFactory.enderecoFactory(novaPessoaDto.getCodigoPostal()), novaPessoaDto.getCodigoPostal());
-
-		if (!EnderecoUtils.validaEndereco(endereco))
-			throw new ApiRequestException("Endereço inválido.");
-
+		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
+		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal()); 
+		
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
 		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
@@ -55,7 +52,7 @@ public class ClienteService {
 		if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
-		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), endereco));
+		return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),enderecoDto));
 	}
 
 	public Cliente detalharCliente(String cpf) {
@@ -63,6 +60,10 @@ public class ClienteService {
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 
 		return clienteRepository.findByCpf(cpf);
+	}
+	
+	public List<Prestador> procurarPrestadores(String codigoPostal){
+		return prestadorRepository.findAllByPostal(codigoPostal);
 	}
 
 	public Cliente alterarCliente(AlteracaoPessoaDto pessoaDto) {

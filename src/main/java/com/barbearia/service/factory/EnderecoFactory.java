@@ -4,14 +4,13 @@ import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.EnderecoCA;
 
 public class EnderecoFactory {
-	public static IEndereco enderecoFactory(String codigoPostal) {
-		final Integer codigoPostalLength = codigoPostal.length();
+	public static IEndereco enderecoFactory(String pais) {
 		
-		switch (codigoPostalLength) {
-		case 5:
-			return new EnderecoCA();
-		case 8:
+		switch (pais) {
+		case "BR":
 			return new EnderecoBR();
+		case "CA":
+			return new EnderecoCA();
 		default:
 			return null;
 		}

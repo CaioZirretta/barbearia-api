@@ -18,3 +18,5 @@ target/
 /settings
 
 /readme.md
+Scripts/Script.sql
+*.sql
