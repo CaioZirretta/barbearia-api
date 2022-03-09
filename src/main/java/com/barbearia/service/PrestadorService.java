@@ -35,9 +35,10 @@ public class PrestadorService {
 		if (!EnderecoUtils.validaEndereco(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
 
-		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
+		if (!EnderecoUtils.validaComplemento(novaPessoaDto.getComplemento()))
+			throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
 
-		String pais = EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem());
+		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
 
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
@@ -53,7 +54,7 @@ public class PrestadorService {
 		if (clienteRepository.findByCpf(novaPessoaDto.getCpf()) != null)
 			throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
 		try {
-			return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
+			return prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), enderecoDto));
 		} catch (org.springframework.transaction.TransactionSystemException e) {
 			throw new ApiRequestException("CPF inválido");
 		}

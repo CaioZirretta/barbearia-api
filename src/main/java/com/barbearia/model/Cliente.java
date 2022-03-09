@@ -5,6 +5,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -29,6 +30,7 @@ public class Cliente {
 	private String nome;
 
 	@Embedded
+	@NotNull
 	private EnderecoDto endereco;
 
 }

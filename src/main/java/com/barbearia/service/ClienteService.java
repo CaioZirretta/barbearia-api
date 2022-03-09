@@ -33,14 +33,14 @@ public class ClienteService {
 	}
 
 	public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
+
 		if (!EnderecoUtils.validaEndereco(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
 
+		if (!EnderecoUtils.validaComplemento(novaPessoaDto.getComplemento()))
+			throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
+
 		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
-
-		enderecoDto.setCountry(EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem()));
-		enderecoDto.setComplemento(novaPessoaDto.getComplemento());
-
 
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 

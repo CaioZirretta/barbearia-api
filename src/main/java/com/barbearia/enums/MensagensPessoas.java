@@ -11,7 +11,8 @@ public enum MensagensPessoas {
 	PRESTADOR_JA_EXISTE("O prestador já foi cadastrado"),
 	CLIENTE_NAO_EXISTE("Cliente não cadastrado"),
 	PRESTADOR_NAO_EXISTE("Prestador não cadastrado"),
-	CODIGO_POSTAL_INVALIDO("Código postal inválido");
+	CODIGO_POSTAL_INVALIDO("Código postal inválido"), 
+	COMPLEMENTO_GRANDE("Tamanho máximo de 50 caracteres no complemento ultrapassado");
 	
 	private String mensagem;
 	
