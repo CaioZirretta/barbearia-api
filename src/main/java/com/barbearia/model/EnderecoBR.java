@@ -11,6 +11,7 @@ import lombok.Data;
 
 @Data
 public class EnderecoBR implements IEndereco {
+	String pais;
 	String cep;
 	String uf;
 	String bairro;

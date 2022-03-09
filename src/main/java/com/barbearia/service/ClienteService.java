@@ -38,7 +38,9 @@ public class ClienteService {
 
 		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
 
-		String pais = EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem());
+		enderecoDto.setCountry(EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem()));
+		enderecoDto.setComplemento(novaPessoaDto.getComplemento());
+
 
 		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
 
@@ -55,9 +57,9 @@ public class ClienteService {
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
 		try {
-			return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), pais, enderecoDto));
+			return clienteRepository.save(new Cliente(novaPessoaDto.getCpf(), novaPessoaDto.getNome(), enderecoDto));
 		} catch (org.springframework.transaction.TransactionSystemException e) {
-			throw new ApiRequestException("CPF inválido");
+			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 		}
 	}
 

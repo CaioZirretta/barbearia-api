@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 @Embeddable
 public class EnderecoDto {
+	String country;
+
 	// Endereço BR 
 	String cep;
 	String uf;

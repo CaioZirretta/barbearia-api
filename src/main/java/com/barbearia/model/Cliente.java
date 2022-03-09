@@ -24,13 +24,10 @@ public class Cliente {
 	@Id
 	@CPF
 	private String cpf;
-	
-	@Column(nullable = false) 
+
+	@Column(nullable = false)
 	private String nome;
-	
-	@Column
-	private String pais;
-	
+
 	@Embedded
 	private EnderecoDto endereco;
 

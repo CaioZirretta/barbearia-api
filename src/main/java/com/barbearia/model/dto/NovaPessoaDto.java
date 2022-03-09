@@ -11,5 +11,6 @@ public class NovaPessoaDto {
 	private String cpf;
 	private String nome;
 	private String codigoPostal;
+	private String complemento;
 	private String origem;
 }
