@@ -7,17 +7,17 @@ public enum Paises {
 	BRASIL("BR"),
 	CANADA("CA");
 	
-	private String pais;
+	private String sigla;
 	
-	Paises(String pais){
-		this.pais = pais;
+	Paises(String sigla){
+		this.sigla = sigla;
 	}
 	
-	public String getPais() {
-		return pais;
+	public String getSigla() {
+		return sigla;
 	}
 	
-	public static Set<Paises> todos(){
+	public static Set<Paises> getListaPaises(){
 		return EnumSet.allOf(Paises.class);
 	}
 }

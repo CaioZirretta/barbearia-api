@@ -11,18 +11,11 @@ import lombok.Data;
 
 @Data
 public class EnderecoBR implements IEndereco {
-	String pais;
-	String cep;
-	String uf;
-	String bairro;
-	String logradouro;
-	String localidade;
-	String complemento;
 
 	public EnderecoDto requestEndereco(String codigoPostal) {
 		String url = "https://viacep.com.br/ws/" + codigoPostal + "/json/";
 		EnderecoDto endereco = null;
-		
+
 		try {
 			endereco = RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
 		} catch (HttpClientErrorException e) {

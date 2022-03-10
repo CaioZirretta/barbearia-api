@@ -95,12 +95,9 @@ public class ClienteService {
 	}
 
 	// Validações
-
 	public boolean verificaSeClienteExiste(String cpf) {
-		// Verifica se o cliente já existe
 		if (clienteRepository.findByCpf(cpf) != null)
 			return true;
 		return false;
 	}
-
 }

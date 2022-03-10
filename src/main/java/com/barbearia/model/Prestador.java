@@ -5,6 +5,9 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.br.CPF;
 
 import com.barbearia.model.dto.EnderecoDto;
 
@@ -20,13 +23,14 @@ import lombok.NoArgsConstructor;
 public class Prestador {
 
 	@Id
-	// @CPF
+	@CPF
 	private String cpf;
 	
 	@Column(nullable = false) 
 	private String nome;
 	
 	@Embedded
+	@NotNull
 	private EnderecoDto endereco;
 
 }

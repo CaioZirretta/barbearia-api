@@ -9,10 +9,14 @@ import com.barbearia.service.factory.IEndereco;
 public class EnderecoUtils {
 
 	public static EnderecoDto montarEndereco(NovaPessoaDto novaPessoaDto) {
+		// Instancia
 		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
+		// Valores
 		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal());
+		
 		enderecoDto.setCountry(EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem()));
 		enderecoDto.setComplemento(novaPessoaDto.getComplemento());
+		
 		return enderecoDto;
 	}
 
@@ -29,8 +33,8 @@ public class EnderecoUtils {
 	}
 
 	public static String paisOrigem(String origem) {
-		for (Paises pais : Paises.todos()) {
-			if (origem.equalsIgnoreCase(pais.getPais())) 
+		for (Paises pais : Paises.getListaPaises()) {
+			if (origem.equalsIgnoreCase(pais.getSigla())) 
 				return pais.toString();
 		}
 		return null;
