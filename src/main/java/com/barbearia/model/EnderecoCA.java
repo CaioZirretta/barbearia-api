@@ -15,7 +15,7 @@ public class EnderecoCA implements IEndereco {
 		EnderecoDto endereco = RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
 
 		if (endereco.getPostal() == null)
-			throw new ApiRequestException("Formato inválido da resposta");
+			throw new ApiRequestException("Formato inválido da resposta (Geocoder)");
 
 		return endereco;
 	}

@@ -14,13 +14,11 @@ public class EnderecoBR implements IEndereco {
 
 	public EnderecoDto requestEndereco(String codigoPostal) {
 		String url = "https://viacep.com.br/ws/" + codigoPostal + "/json/";
-		EnderecoDto endereco = null;
 
 		try {
-			endereco = RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
+			return RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
 		} catch (HttpClientErrorException e) {
-			throw new ApiRequestException("Formato inválido da resposta: " + e.getCause());
+			throw new ApiRequestException("Formato inválido da resposta (Viacep): " + e.getCause());
 		}
-		return endereco;
 	}
 }
