@@ -10,14 +10,14 @@ import lombok.Data;
 public class EnderecoDto {
 	String country;
 
-	// Endereço BR 
+	// Endereço BR
 	String cep;
 	String uf;
 	String bairro;
 	String logradouro;
 	String localidade;
 	String complemento;
-	
+
 	// Endereço CA
 	@Embedded
 	StandardDto standard;

@@ -10,13 +10,13 @@ import lombok.Data;
 @Data
 public class EnderecoCA implements IEndereco {
 
-	public EnderecoDto requestEndereco(String codigoPostal) {
-		String url = "https://geocoder.ca/" + codigoPostal + "?json=1";
-		EnderecoDto endereco = RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
+  public EnderecoDto requestEndereco(String codigoPostal) {
+    String url = "https://geocoder.ca/" + codigoPostal + "?json=1";
+    EnderecoDto endereco = RequestExterno.getRestTemplate().getForObject(url, EnderecoDto.class);
 
-		if (endereco.getPostal() == null)
-			throw new ApiRequestException("Formato inválido da resposta (Geocoder)");
+    if (endereco.getPostal() == null)
+      throw new ApiRequestException("Formato inválido da resposta (Geocoder)");
 
-		return endereco;
-	}
+    return endereco;
+  }
 }
