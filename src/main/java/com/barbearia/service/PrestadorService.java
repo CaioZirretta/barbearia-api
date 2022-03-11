@@ -32,7 +32,7 @@ public class PrestadorService {
 	}
 
 	public Prestador adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
-		if (!EnderecoUtils.validaEndereco(novaPessoaDto.getCodigoPostal()))
+		if (!EnderecoUtils.validaCodigoPostal(novaPessoaDto.getCodigoPostal()))
 			throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
 
 		if (!EnderecoUtils.validaComplemento(novaPessoaDto.getComplemento()))

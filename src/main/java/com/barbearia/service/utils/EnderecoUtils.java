@@ -20,7 +20,7 @@ public class EnderecoUtils {
     return enderecoDto;
   }
 
-  public static boolean validaEndereco(String codigoPostal) {
+  public static boolean validaCodigoPostal(String codigoPostal) {
     if (codigoPostal.matches(RegexUtils.brPostalRegex)
         || codigoPostal.matches(RegexUtils.caPostalRegex))
       return true;
