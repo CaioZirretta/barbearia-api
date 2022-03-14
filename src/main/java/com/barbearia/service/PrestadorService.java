@@ -13,7 +13,7 @@ import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.utils.CpfUtils;
+import com.barbearia.service.utils.PessoaUtils;
 import com.barbearia.service.utils.EnderecoUtils;
 
 @Service
@@ -40,9 +40,9 @@ public class PrestadorService {
 
 		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
 
-		novaPessoaDto.setCpf(CpfUtils.formataCpf(novaPessoaDto.getCpf()));
+		novaPessoaDto.setCpf(PessoaUtils.formataCpf(novaPessoaDto.getCpf()));
 
-		if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
+		if (!PessoaUtils.validaCpf(novaPessoaDto.getCpf()))
 			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (novaPessoaDto.getNome().isEmpty())
@@ -68,9 +68,9 @@ public class PrestadorService {
 	}
 
 	public Prestador alterarPrestador(AlteracaoPessoaDto pessoaDto) {
-		pessoaDto.setCpf(CpfUtils.formataCpf(pessoaDto.getCpf()));
+		pessoaDto.setCpf(PessoaUtils.formataCpf(pessoaDto.getCpf()));
 
-		if (!CpfUtils.validaCpf(pessoaDto.getCpf()))
+		if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
 			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (!verificaSePrestadorExiste(pessoaDto.getCpf()))
@@ -87,12 +87,16 @@ public class PrestadorService {
 		return prestador;
 	}
 
+	public List<Prestador> listarTodosPorCodigoPostal(String codigoPostal) {
+		return prestadorRepository.findAllByPostal(codigoPostal);
+	}
+
 	// Validações
 
 	public boolean verificaSePrestadorExiste(String cpf) {
-		// Verifica se um prestador já existe
 		if (prestadorRepository.findByCpf(cpf) != null)
 			return true;
 		return false;
 	}
+
 }

@@ -15,7 +15,7 @@ import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
 import com.barbearia.repository.AgendamentoRepository;
-import com.barbearia.service.utils.CpfUtils;
+import com.barbearia.service.utils.PessoaUtils;
 
 @Service
 public class AgendamentoService {
@@ -40,7 +40,7 @@ public class AgendamentoService {
 
 	public List<LocalDate> listarHorarioVagoMes(Integer ano, Integer mes) {
 
-		if (!CpfUtils.validaAnoMes(ano, mes))
+		if (!PessoaUtils.validaAnoMes(ano, mes))
 			throw new ApiRequestException(MensagensAgendamento.ANO_MES_INVALIDOS.getMensagem());
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
@@ -84,7 +84,7 @@ public class AgendamentoService {
 	}
 
 	public List<Agendamento> procurarPorCpfCliente(String cpfCliente) {
-		if (!CpfUtils.validaCpf(cpfCliente))
+		if (!PessoaUtils.validaCpf(cpfCliente))
 			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 		
 		if (!clienteService.verificaSeClienteExiste(cpfCliente))
@@ -93,7 +93,7 @@ public class AgendamentoService {
 	}
 
 	public List<Agendamento> procurarPorCpfPrestador(String cpfPrestador) {
-		if (!CpfUtils.validaCpf(cpfPrestador))
+		if (!PessoaUtils.validaCpf(cpfPrestador))
 			throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
 		if (!prestadorService.verificaSePrestadorExiste(cpfPrestador))

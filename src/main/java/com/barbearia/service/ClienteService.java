@@ -14,7 +14,7 @@ import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.utils.CpfUtils;
+import com.barbearia.service.utils.PessoaUtils;
 import com.barbearia.service.utils.EnderecoUtils;
 
 @Service
@@ -24,7 +24,7 @@ public class ClienteService {
   private ClienteRepository clienteRepository;
 
   @Autowired
-  private PrestadorRepository prestadorRepository;
+  private PrestadorService prestadorService;
 
   public List<Cliente> listarTodos() {
     if (clienteRepository.findAll().isEmpty())
@@ -40,21 +40,24 @@ public class ClienteService {
     if (!EnderecoUtils.validaComplemento(novaPessoaDto.getComplemento()))
       throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
 
-    if (!CpfUtils.validaCpf(novaPessoaDto.getCpf()))
+    if(!EnderecoUtils.validaOrigem(novaPessoaDto.getOrigem()))
+    	throw new ApiRequestException(MensagensPessoas.ORIGEM_INVALIDA.getMensagem());
+    
+    if (!PessoaUtils.validaCpf(novaPessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
-    if (novaPessoaDto.getNome().isEmpty())
+    if (!PessoaUtils.validaNome(novaPessoaDto.getNome()))
       throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
-    if (prestadorRepository.findByCpf(novaPessoaDto.getCpf()) != null)
-      throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
-
+    if(!prestadorService.verificaSePrestadorExiste(novaPessoaDto.getCpf()))
+    	throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
+    
     if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
     try {
       return clienteRepository.save(
-        new Cliente(CpfUtils.formataCpf(novaPessoaDto.getCpf()),
+        new Cliente(PessoaUtils.formataCpf(novaPessoaDto.getCpf()),
           novaPessoaDto.getNome(),
           EnderecoUtils.montarEndereco(novaPessoaDto)));
     } catch (TransactionSystemException e) {
@@ -70,13 +73,13 @@ public class ClienteService {
   }
 
   public List<Prestador> procurarPrestadores(String codigoPostal) {
-    return prestadorRepository.findAllByPostal(codigoPostal);
+    return prestadorService.listarTodosPorCodigoPostal(codigoPostal);
   }
 
   public Cliente alterarCliente(AlteracaoPessoaDto pessoaDto) {
-    pessoaDto.setCpf(CpfUtils.formataCpf(pessoaDto.getCpf()));
+    pessoaDto.setCpf(PessoaUtils.formataCpf(pessoaDto.getCpf()));
 
-    if (!CpfUtils.validaCpf(pessoaDto.getCpf()))
+    if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
     if (!verificaSeClienteExiste(pessoaDto.getCpf()))
