@@ -23,7 +23,6 @@ import lombok.NoArgsConstructor;
 public class Cliente {
 
 	@Id
-	@CPF
 	private String cpf;
 
 	@Column(nullable = false)

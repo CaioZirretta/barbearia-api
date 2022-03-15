@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionSystemException;
 
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
@@ -54,14 +53,8 @@ public class ClienteService {
     if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
-    try {
-      return clienteRepository.save(
-        new Cliente(PessoaUtils.formataCpf(novaPessoaDto.getCpf()),
-          novaPessoaDto.getNome(),
-          EnderecoService.montarEndereco(novaPessoaDto)));
-    } catch (TransactionSystemException e) {
-      throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
-    }
+	return clienteRepository.save(new Cliente(PessoaUtils.formataCpf(novaPessoaDto.getCpf()), novaPessoaDto.getNome(),
+			EnderecoService.montarEndereco(novaPessoaDto))); 
   }
 
   public Cliente detalharCliente(String cpf) {
