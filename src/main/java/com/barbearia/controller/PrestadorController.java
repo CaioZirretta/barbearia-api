@@ -37,6 +37,11 @@ public class PrestadorController {
 		return new ResponseEntity<Prestador>(prestadorService.detalharPrestador(cpf), HttpStatus.OK);
 	}
 	
+	@GetMapping("/{codigoPostal}")
+  public ResponseEntity<List<Prestador>> listarTodosPorCodigoPostal(@PathVariable String codigoPostal) {
+    return new ResponseEntity<List<Prestador>>(prestadorService.listarTodosPorCodigoPostal(codigoPostal), HttpStatus.OK);
+  }
+	
 	@PostMapping("/adicionar")
 	public ResponseEntity<Prestador> adicionar(@RequestBody NovaPessoaDto novaPessoaDto)  {
 		return new ResponseEntity<Prestador>(prestadorService.adicionar(novaPessoaDto), HttpStatus.CREATED);
