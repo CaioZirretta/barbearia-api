@@ -12,6 +12,7 @@ import com.barbearia.BarbeariaApiApplication;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.dto.EnderecoDto;
 import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.ClienteService;
 import com.barbearia.service.factory.IEndereco;
@@ -29,6 +30,10 @@ public class ClienteServiceTest {
 	@Autowired
 	@Mock
 	private PrestadorRepository prestadorRepository;
+	
+	@Autowired
+	@Mock
+	private ClienteRepository clienteRepository;
 
 	// Adicionar
 
@@ -105,6 +110,25 @@ public class ClienteServiceTest {
 			clienteService.adicionar(novaPessoaDto);
 		});
 	}
+	
+	@Test
+	public void adicionar_falhaClienteJaExiste() {
+		NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+		novaPessoaDto.setCodigoPostal("74815435");
+		novaPessoaDto.setComplemento("complemento");
+		novaPessoaDto.setOrigem("BR");
+		novaPessoaDto.setCpf("35842224941");
+		novaPessoaDto.setNome("Poste");
+
+		Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
+
+		Assertions.assertEquals(clienteService.adicionar(novaPessoaDto), clienteRepository.findByCpf(novaPessoaDto.getCpf()));
+	
+		Assertions.assertThrows(ApiRequestException.class, () -> {
+			clienteService.adicionar(novaPessoaDto);
+		});
+	}
+	
 
 	// Listar
 

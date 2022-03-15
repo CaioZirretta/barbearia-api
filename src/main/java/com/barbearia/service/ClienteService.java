@@ -13,9 +13,8 @@ import com.barbearia.model.Prestador;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
 import com.barbearia.repository.ClienteRepository;
-import com.barbearia.repository.PrestadorRepository;
-import com.barbearia.service.utils.PessoaUtils;
 import com.barbearia.service.utils.EnderecoUtils;
+import com.barbearia.service.utils.PessoaUtils;
 
 @Service
 public class ClienteService {
@@ -49,7 +48,7 @@ public class ClienteService {
     if (!PessoaUtils.validaNome(novaPessoaDto.getNome()))
       throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
 
-    if(!prestadorService.verificaSePrestadorExiste(novaPessoaDto.getCpf()))
+    if(prestadorService.verificaSePrestadorExiste(novaPessoaDto.getCpf()))
     	throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
     
     if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
@@ -59,7 +58,7 @@ public class ClienteService {
       return clienteRepository.save(
         new Cliente(PessoaUtils.formataCpf(novaPessoaDto.getCpf()),
           novaPessoaDto.getNome(),
-          EnderecoUtils.montarEndereco(novaPessoaDto)));
+          EnderecoService.montarEndereco(novaPessoaDto)));
     } catch (TransactionSystemException e) {
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
     }

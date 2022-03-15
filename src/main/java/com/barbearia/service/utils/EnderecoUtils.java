@@ -8,16 +8,6 @@ import com.barbearia.service.factory.IEndereco;
 
 public class EnderecoUtils {
 
-	public static EnderecoDto montarEndereco(NovaPessoaDto novaPessoaDto) {
-		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
-		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal());
-
-		enderecoDto.setCountry(EnderecoUtils.paisOrigem(novaPessoaDto.getOrigem()));
-		enderecoDto.setComplemento(novaPessoaDto.getComplemento());
-
-		return enderecoDto;
-	}
-
 	public static boolean validaCodigoPostal(String codigoPostal) {
 		if (!(codigoPostal == null))
 			if (codigoPostal.matches(RegexUtils.brPostalRegex) || codigoPostal.matches(RegexUtils.caPostalRegex))

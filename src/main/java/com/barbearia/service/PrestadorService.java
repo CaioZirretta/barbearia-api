@@ -38,7 +38,7 @@ public class PrestadorService {
 		if (!EnderecoUtils.validaComplemento(novaPessoaDto.getComplemento()))
 			throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
 
-		EnderecoDto enderecoDto = EnderecoUtils.montarEndereco(novaPessoaDto);
+		EnderecoDto enderecoDto = EnderecoService.montarEndereco(novaPessoaDto);
 
 		novaPessoaDto.setCpf(PessoaUtils.formataCpf(novaPessoaDto.getCpf()));
 
