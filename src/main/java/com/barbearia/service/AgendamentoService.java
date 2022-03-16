@@ -1,6 +1,5 @@
 package com.barbearia.service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +14,7 @@ import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
 import com.barbearia.repository.AgendamentoRepository;
+import com.barbearia.service.utils.HorarioDiaUtils;
 import com.barbearia.service.utils.PessoaUtils;
 
 @Service
@@ -40,7 +40,7 @@ public class AgendamentoService {
 
 	public List<LocalDate> listarHorarioVagoMes(Integer ano, Integer mes) {
 
-		if (!PessoaUtils.validaAnoMes(ano, mes))
+		if (!HorarioDiaUtils.validaAnoMes(ano, mes))
 			throw new ApiRequestException(MensagensAgendamento.ANO_MES_INVALIDOS.getMensagem());
 
 		List<LocalDate> diasVagos = new ArrayList<LocalDate>();
@@ -63,10 +63,13 @@ public class AgendamentoService {
 		return diasVagos;
 	}
 
-	public List<LocalTime> listarHorarioVagoDiaPrestador(String dia, String cpfPrestador) {
-
+	public List<LocalTime> listarHorarioVagoDiaPrestador(String data, String cpfPrestador) {
+	  
+	  if(!prestadorService.verificaSePrestadorExiste(cpfPrestador))
+	    throw new ApiRequestException(MensagensPessoas.CPF_PRESTADOR_INVALIDO.getMensagem());
+	  	  
 		DateTimeFormatter dFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate diaFormatado = LocalDate.parse(dia, dFormatter);
+		LocalDate diaFormatado = LocalDate.parse(data, dFormatter);
 		
 		List<LocalTime> horarioVago = new ArrayList<LocalTime>();
 
@@ -89,6 +92,7 @@ public class AgendamentoService {
 		
 		if (!clienteService.verificaSeClienteExiste(cpfCliente))
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
+		
 		return agendamentoRepository.findByCpfCliente(cpfCliente);
 	}
 
@@ -98,9 +102,6 @@ public class AgendamentoService {
 
 		if (!prestadorService.verificaSePrestadorExiste(cpfPrestador))
 			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
-
-		if (agendamentoRepository.findByCpfCliente(cpfPrestador) == null)
-			throw new ApiRequestException(MensagensAgendamento.CLIENTE_SEM_AGENDAMENTO.getMensagem());
 
 		return agendamentoRepository.findByCpfPrestador(cpfPrestador);
 	}
@@ -115,21 +116,25 @@ public class AgendamentoService {
 
 	public Agendamento agendar(Agendamento agendamento) {
 		
-		// Verificar se o CPF é válido
-		
+	  if(!PessoaUtils.validaCpf(agendamento.getCpfCliente()))
+	    throw new ApiRequestException(MensagensPessoas.CPF_CLIENTE_INVALIDO.getMensagem());
+	  
+	  if(!PessoaUtils.validaCpf(agendamento.getCpfPrestador()))
+      throw new ApiRequestException(MensagensPessoas.CPF_PRESTADOR_INVALIDO.getMensagem());
+	  
 		if(!clienteService.verificaSeClienteExiste(agendamento.getCpfCliente()))
 			throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 		
 		if(!prestadorService.verificaSePrestadorExiste(agendamento.getCpfPrestador()))
 			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
 		
-		if (!verificaHorarioAtual(agendamento))
+		if (!HorarioDiaUtils.verificaHorarioAtual(agendamento))
 			throw new ApiRequestException(MensagensAgendamento.HORARIO_FUTURO_INVALIDO.getMensagem());
 
 		if (!verificaHorarioComercial(agendamento))
 			throw new ApiRequestException(MensagensAgendamento.HORARIO_NAO_COMERCIAL.getMensagem());
 
-		if (!verificaDiaUtil(agendamento))
+		if (!HorarioDiaUtils.verificaDiaUtil(agendamento))
 			throw new ApiRequestException(MensagensAgendamento.DATA_NAO_UTIL.getMensagem());
 
 		if (!verificaDiaCliente(agendamento))
@@ -169,44 +174,30 @@ public class AgendamentoService {
 		return horarios;
 	}
 
-	private boolean verificaDiaUtil(Agendamento agendamento) {
-		// Verifica se o dia é útil
-		if (agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SATURDAY)
-				|| agendamento.getDia().getDayOfWeek().equals(DayOfWeek.SUNDAY))
-			return false;
-		return true;
-	}
-
-	private boolean verificaHorarioCliente(Agendamento agendamento) {
-		// Verifica se o cliente tem um horário agendado no dia e horário informados
-		// Específico para dia e horário
-		if (agendamentoRepository.findHorarioByCliente(agendamento.getCpfCliente(), agendamento.getDia(),
-				agendamento.getHorario()) != null)
-			return false;
-		return true;
-	}
-
-	private boolean verificaHorarioAtual(Agendamento agendamento) {
-		if (agendamento.getDia().isBefore(LocalDate.now()))
-			return false;
-		if (agendamento.getDia().isEqual(LocalDate.now()) && agendamento.getHorario().isBefore(LocalTime.now()))
-			return false;
-		return true;
-	}
-
 	private boolean verificaDiaCliente(Agendamento agendamento) {
-		// Verifica se o cliente possui algum horário no dia informado
-		// Específico para apenas o dia
-		if (agendamentoRepository.findDiaByCliente(agendamento.getCpfCliente(), agendamento.getDia()) != null)
-			return false;
-		return true;
-	}
+    // Verifica se o cliente possui algum horário no dia informado
+    // Específico para apenas o dia
+    if (agendamentoRepository.findDiaByCliente(agendamento.getCpfCliente(), agendamento.getDia()) != null)
+      return false;
+    return true;
+  }
 
 	private boolean verificaHorarioPrestador(Agendamento agendamento) {
-		// Verifica se o prestador está vago no dia e horário informados
-		if (agendamentoRepository.findHorarioByPrestador(agendamento.getCpfPrestador(), agendamento.getDia(),
-				agendamento.getHorario()) != null)
-			return false;
-		return true;
-	}
+    // Verifica se o prestador está vago no dia e horário informados
+    if (agendamentoRepository.findHorarioByPrestador(agendamento.getCpfPrestador(), agendamento.getDia(),
+        agendamento.getHorario()) != null)
+      return false;
+    return true;
+  }
+	
+
+  public boolean verificaHorarioCliente(Agendamento agendamento) {
+    // Verifica se o cliente tem um horário agendado no dia e horário informados
+    // Específico para dia e horário
+    if (agendamentoRepository.findHorarioByCliente(agendamento.getCpfCliente(), agendamento.getDia(),
+        agendamento.getHorario()) != null)
+      return false;
+    return true;
+  }
+
 }

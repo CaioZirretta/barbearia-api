@@ -45,7 +45,7 @@ public class ClienteService {
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
 
     if (!PessoaUtils.validaNome(novaPessoaDto.getNome()))
-      throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
+      throw new ApiRequestException(MensagensPessoas.NOME_INVALIDO.getMensagem());
 
     if (verificaSePrestadorExiste(novaPessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
@@ -66,17 +66,23 @@ public class ClienteService {
   }
 
   public Cliente alterarCliente(AlteracaoPessoaDto pessoaDto) {
-    pessoaDto.setCpf(PessoaUtils.formataCpf(pessoaDto.getCpf()));
 
     if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
+    
+    if (!PessoaUtils.validaCpf(pessoaDto.getCpfNovo()))
+      throw new ApiRequestException(MensagensPessoas.CPF_NOVO_INVALIDO.getMensagem());
 
-    if (!verificaSeClienteExiste(pessoaDto.getCpf()))
+    if (!PessoaUtils.validaNome(pessoaDto.getNomeNovo()))
+      throw new ApiRequestException(MensagensPessoas.NOME_INVALIDO.getMensagem());
+    
+    if (verificaSePrestadorExiste(pessoaDto.getCpf()))
+      throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
+    
+    if (!verificaSeClienteExiste(PessoaUtils.formataCpf(pessoaDto.getCpf())))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
-
-    if (pessoaDto.getNomeNovo().isEmpty())
-      throw new ApiRequestException(MensagensPessoas.NOME_VAZIO.getMensagem());
-
+    
+    
     Cliente cliente = clienteRepository.findByCpf(pessoaDto.getCpf());
 
     cliente.setCpf(pessoaDto.getCpfNovo());

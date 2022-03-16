@@ -11,7 +11,8 @@ public enum MensagensAgendamento {
 	DATA_NAO_UTIL("Data inválida. Sábados e domingos não funcionam."),
 	CLIENTE_HORARIO_OCUPADO_DIA("Cliente já possui horário marcado no dia."),
 	CLIENTE_HORARIO_OCUPADO("Horário já ocupada pelo cliente neste dia"),
-	PRESTADOR_HORARIO_OCUPADO("Horário não disponível para o prestador.");
+	PRESTADOR_HORARIO_OCUPADO("Horário não disponível para o prestador."), 
+	DATA_INVALIDA("Data inválida");
 	
 	private String mensagem;
 	

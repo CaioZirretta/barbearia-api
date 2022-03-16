@@ -1,62 +1,38 @@
 package com.totvs.barbearia.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.barbearia.BarbeariaApiApplication;
+import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
-import com.barbearia.model.Prestador;
-import com.barbearia.model.dto.EnderecoDto;
+import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.NovaPessoaDto;
-import com.barbearia.repository.ClienteRepository;
-import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.ClienteService;
 import com.barbearia.service.PrestadorService;
 import com.barbearia.service.factory.IEndereco;
 
 @SpringBootTest(classes = BarbeariaApiApplication.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrestadorServiceTest {
 
-  @Mock
+  @MockBean
   private IEndereco iEndereco;
 
   @Autowired
-  @InjectMocks
-  private ClienteService clienteService;
-
-  @Autowired
-  @InjectMocks
   private PrestadorService prestadorService;
 
   @Autowired
-  @Mock
-  private PrestadorRepository prestadorRepository;
+  private ClienteService clienteService;
 
-  @Autowired
-  @Mock
-  private ClienteRepository clienteRepository;
-  
   // Listar
 
   @Test
-  @Order(1)
-  public void listarTodos_falhaTabelaVazia() {
-    Assertions.assertThrows(ApiRequestException.class, () -> {
-      prestadorService.listarTodos();
-    });
-  }
-  
-  @Test
-  @Order(100) // Evitar static
   public void listarTodos_sucessoTabelaPopulada() {
     Assertions.assertAll(() -> {
       prestadorService.listarTodos();
@@ -67,10 +43,11 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaCodigoPostalNulo() {
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
-    Assertions.assertThrows(ApiRequestException.class, () -> {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
       prestadorService.adicionar(new NovaPessoaDto());
     });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
   }
 
   @Test
@@ -78,10 +55,11 @@ public class PrestadorServiceTest {
     NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
 
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
-    Assertions.assertThrows(ApiRequestException.class, () -> {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
       prestadorService.adicionar(novaPessoaDto);
     });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
   }
 
   @Test
@@ -90,10 +68,25 @@ public class PrestadorServiceTest {
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
 
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
-    Assertions.assertThrows(ApiRequestException.class, () -> {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
       prestadorService.adicionar(novaPessoaDto);
     });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.ORIGEM_INVALIDA.getMensagem());
+  }
+
+  @Test
+  public void adicionar_falhaCpfNulo() {
+    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    novaPessoaDto.setCodigoPostal("74815435");
+    novaPessoaDto.setComplemento("complemento");
+    novaPessoaDto.setOrigem("BR");
+
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.adicionar(novaPessoaDto);
+    });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.CPF_INVALIDO.getMensagem());
   }
 
   @Test
@@ -102,12 +95,13 @@ public class PrestadorServiceTest {
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
-    novaPessoaDto.setCpf("93888053480");
+    novaPessoaDto.setCpf("74417162506");
 
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
-    Assertions.assertThrows(ApiRequestException.class, () -> {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
       prestadorService.adicionar(novaPessoaDto);
     });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.NOME_INVALIDO.getMensagem());
   }
 
   @Test
@@ -116,16 +110,16 @@ public class PrestadorServiceTest {
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
-    novaPessoaDto.setCpf("45010739852");
-    novaPessoaDto.setNome("Teste");
+    novaPessoaDto.setCpf("42887594559");
+    novaPessoaDto.setNome("Poste");
 
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
-    
     clienteService.adicionar(novaPessoaDto);
 
-    Assertions.assertThrows(ApiRequestException.class, () -> {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
       prestadorService.adicionar(novaPessoaDto);
     });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
   }
 
   @Test
@@ -134,52 +128,154 @@ public class PrestadorServiceTest {
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
-    novaPessoaDto.setCpf("35842224941");
+    novaPessoaDto.setCpf("61512752410");
     novaPessoaDto.setNome("Poste");
 
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
+    prestadorService.adicionar(novaPessoaDto);
 
-    Prestador prestador = new Prestador();
-    prestador .setCpf("35842224941");
-
-    prestadorRepository.save(new Prestador(novaPessoaDto.getCpf(), novaPessoaDto.getNome(),
-        iEndereco.requestEndereco(novaPessoaDto.getCodigoPostal())));
-
-    Assertions.assertThrows(ApiRequestException.class, () -> {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
       prestadorService.adicionar(novaPessoaDto);
     });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.PRESTADOR_JA_EXISTE.getMensagem());
   }
 
   @Test
-  @Order(2)
   public void adicionar_sucessoSalvarPrestador() {
     NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
-    novaPessoaDto.setCpf("43732624110");
+    novaPessoaDto.setCpf("06372486946");
     novaPessoaDto.setNome("Poste");
-
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
 
     Assertions.assertAll(() -> {
       prestadorService.adicionar(novaPessoaDto);
     });
   }
 
+  // Detalhar
+
   @Test
-  public void adicionar_falhaCpfInvalido() {
+  public void detalhar_falhaCpfInvalido() {
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.detalharPrestador("123");
+    });
+
+    assertEquals(exception.getMessage(), MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
+  }
+
+  @Test
+  public void detalhar_sucesso() {
     NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
-    novaPessoaDto.setCpf("0");
+    novaPessoaDto.setCpf("43322036154");
     novaPessoaDto.setNome("Poste");
     
-    Mockito.when(iEndereco.requestEndereco(Mockito.anyString())).thenReturn(new EnderecoDto());
+    prestadorService.adicionar(novaPessoaDto);
     
-    Assertions.assertThrows(ApiRequestException.class,() -> {
-      prestadorService.adicionar(novaPessoaDto);
+    Assertions.assertAll(() -> {
+      prestadorService.detalharPrestador("43322036154");
+    });
+  }
+
+  // Alterar
+
+  @Test
+  public void alterar_falhaCpfInvalido() {
+    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    pessoaDto.setCpf("123");
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.alterarPrestador(pessoaDto);
+    });
+    
+    assertEquals(exception.getMessage(), MensagensPessoas.CPF_INVALIDO.getMensagem());
+  }
+
+  @Test
+  public void alterar_falhaCpfNovoInvalido() {
+    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    pessoaDto.setCpf("26063180990");
+    pessoaDto.setCpfNovo("123");
+    
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.alterarPrestador(pessoaDto);
+    });
+    
+    assertEquals(exception.getMessage(), MensagensPessoas.CPF_NOVO_INVALIDO.getMensagem());
+  }
+  
+  @Test
+  public void alterar_falhaNomeInvalido() {
+    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    pessoaDto.setCpf("14362820558");
+    pessoaDto.setCpfNovo("67016748529");
+    pessoaDto.setNomeNovo(null);
+    
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.alterarPrestador(pessoaDto);
+    });
+    
+    assertEquals(exception.getMessage(), MensagensPessoas.NOME_INVALIDO.getMensagem());
+  }
+
+  @Test
+  public void alterar_falhaCpfDePrestador() {
+    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    pessoaDto.setCpf("83178758143");
+    pessoaDto.setCpfNovo("61723146536");
+    pessoaDto.setNomeNovo("Dummy");
+    
+    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    novaPessoaDto.setCodigoPostal("74815435");
+    novaPessoaDto.setComplemento("complemento");
+    novaPessoaDto.setOrigem("BR");
+    novaPessoaDto.setCpf("83178758143");
+    novaPessoaDto.setNome("Poste");
+    
+    clienteService.adicionar(novaPessoaDto);
+    
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.alterarPrestador(pessoaDto);
+    });
+    
+    assertEquals(exception.getMessage(), MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
+  }
+  
+  @Test
+  public void alterar_falhaClienteNaoEncontrado() {
+    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    pessoaDto.setCpf("87586421889");
+    pessoaDto.setCpfNovo("63525332300");
+    pessoaDto.setNomeNovo("Dummy");
+    
+    ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
+      prestadorService.alterarPrestador(pessoaDto);
+    });
+    
+    assertEquals(exception.getMessage(), MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
+  }
+
+  @Test
+  public void alterar_sucesso() {
+    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    pessoaDto.setCpf("25852206806");
+    pessoaDto.setNomeNovo("Poste");
+    pessoaDto.setCpfNovo("32264088877");
+    
+    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    novaPessoaDto.setCodigoPostal("74815435");
+    novaPessoaDto.setComplemento("complemento");
+    novaPessoaDto.setOrigem("BR");
+    novaPessoaDto.setCpf("25852206806");
+    novaPessoaDto.setNome("Poste");
+    
+    prestadorService.adicionar(novaPessoaDto);
+
+    Assertions.assertAll(() -> {
+      prestadorService.alterarPrestador(pessoaDto);
     });
   }
 }
