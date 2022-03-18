@@ -6,7 +6,7 @@ public enum MensagensAgendamento {
 	ANO_MES_INVALIDOS("Informações inválidas."),
 	HORARIO_OCUPADO("Não há horários vagos no dia selecionado."),
 	CLIENTE_SEM_AGENDAMENTO("Não foram encontrados agendamentos para este cliente."),
-	HORARIO_FUTURO_INVALIDO("Não é possível agendar para datas ou horários passados"),
+	HORARIO_PASSADO_INVALIDO("Não é possível agendar para datas ou horários passados"),
 	HORARIO_NAO_COMERCIAL("Horário inválido. Horários disponíveis entre 8 e 17."),
 	DATA_NAO_UTIL("Data inválida. Sábados e domingos não funcionam."),
 	CLIENTE_HORARIO_OCUPADO_DIA("Cliente já possui horário marcado no dia."),
