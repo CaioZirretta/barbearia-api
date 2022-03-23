@@ -129,7 +129,7 @@ public class AgendamentoService {
 			throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
 		
 		if (!HorarioDiaUtils.verificaHorarioAtual(agendamento))
-			throw new ApiRequestException(MensagensAgendamento.HORARIO_FUTURO_INVALIDO.getMensagem());
+			throw new ApiRequestException(MensagensAgendamento.HORARIO_PASSADO_INVALIDO.getMensagem());
 
 		if (!verificaHorarioComercial(agendamento))
 			throw new ApiRequestException(MensagensAgendamento.HORARIO_NAO_COMERCIAL.getMensagem());

@@ -7,8 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.br.CPF;
-
 import com.barbearia.model.dto.EnderecoDto;
 
 import lombok.AllArgsConstructor;

@@ -23,7 +23,6 @@ import lombok.NoArgsConstructor;
 public class Prestador {
 
 	@Id
-	@CPF
 	private String cpf;
 	
 	@Column(nullable = false) 
