@@ -266,41 +266,6 @@ public class AgendamentoServiceTest {
       .getMensagem()));
   }
   
-  @Test
-  public void agendar_falhaHorarioFuturoInvalido() {
-   
-  }
-  
-  @Test
-  public void agendar_falhaHorarioNaoComercial() {
-   
-  }
-  
-  @Test
-  public void agendar_falhaDiaNaoUtil() {
-   
-  }
-  
-  @Test
-  public void agendar_falhaClienteOcupadoNoDia() {
-   
-  }
-  
-  @Test
-  public void agendar_falhaClienteOcupadoNoHorario() {
-   
-  }
-  
-  @Test
-  public void agendar_falhaPrestadorOcupadoNoHorario() {
-   
-  }
-  
-  @Test
-  public void agendar_sucesso() {
-    
-  }
-  
   private NovaPessoaDto dummyNovaPessoaDto() {
     NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
