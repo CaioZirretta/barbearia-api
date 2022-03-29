@@ -16,7 +16,7 @@ public interface ClienteRepository extends CrudRepository<Cliente, String> {
 
 	@Transactional
 	@Modifying
-	public Cliente deleteByCpf(String cpf);
+	public void deleteByCpf(String cpf);
 	
 	@Transactional
 	@Modifying

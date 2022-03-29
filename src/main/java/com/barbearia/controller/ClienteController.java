@@ -51,6 +51,12 @@ public class ClienteController {
     return new ResponseEntity<Cliente>(clienteService.alterarCliente(cpf, pessoaDto),
       HttpStatus.OK);
   }
+  
+  @DeleteMapping
+  public ResponseEntity<String> apagarTodos(@RequestParam String cpf) {
+    clienteService.apagarCliente(cpf);
+    return new ResponseEntity<String>(HttpStatus.OK);
+  }
 
   @DeleteMapping("/todos")
   public ResponseEntity<String> apagarTodos() {

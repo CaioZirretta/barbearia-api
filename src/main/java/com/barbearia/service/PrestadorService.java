@@ -104,8 +104,18 @@ public class PrestadorService {
   public List<Prestador> listarTodosPorCodigoPostal(String codigoPostal) {
     return prestadorRepository.findAllByPostal(codigoPostal);
   }
+  
+  public void apagarPrestador(String cpf) {
+    if (!PessoaUtils.validaCpf(cpf))
+      throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
+    
+    if (!verificaSePrestadorExiste(PessoaUtils.formataCpf(cpf)))
+      throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
+    
+    prestadorRepository.deleteByCpf(cpf);  
+  }
 
-  // Validações
+  // Validações de repositório
 
   public boolean verificaSePrestadorExiste(String cpf) {
     if (prestadorRepository.findByCpf(cpf) != null)
@@ -118,5 +128,4 @@ public class PrestadorService {
       return true;
     return false;
   }
-
 }

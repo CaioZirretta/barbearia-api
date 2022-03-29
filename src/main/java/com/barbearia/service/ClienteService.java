@@ -84,23 +84,34 @@ public class ClienteService {
     if (pessoaDto.getCodigoPostal() != null) {
       if (!EnderecoUtils.validaCodigoPostal(pessoaDto.getCodigoPostal()))
         throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
-      
+
       if (!EnderecoUtils.validaComplemento(pessoaDto.getComplemento()))
         throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
-      
+
       if (!EnderecoUtils.validaOrigem(pessoaDto.getOrigem()))
         throw new ApiRequestException(MensagensPessoas.ORIGEM_INVALIDA.getMensagem());
     }
-    
+
     Cliente cliente = clienteRepository.findByCpf(pessoaDto.getCpf());
 
     cliente.setCpf(pessoaDto.getCpf());
     cliente.setNome(pessoaDto.getNome());
-    
+
     if (pessoaDto.getCodigoPostal() != null)
       cliente.setEndereco(EnderecoService.montarEndereco(pessoaDto));
 
     return cliente;
+  }
+  
+
+  public void apagarCliente(String cpf) {
+    if (!PessoaUtils.validaCpf(cpf))
+      throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
+    
+    if (!verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
+      throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
+    
+    clienteRepository.deleteByCpf(cpf);    
   }
 
   public void apagarTodos() {
@@ -119,5 +130,6 @@ public class ClienteService {
       return true;
     return false;
   }
+
 
 }

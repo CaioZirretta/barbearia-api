@@ -22,5 +22,5 @@ public interface PrestadorRepository extends CrudRepository<Prestador, String> {
 	
 	@Transactional
 	@Modifying
-	public Prestador deleteByCpf(String cpf);
+	public void deleteByCpf(String cpf);
 }
