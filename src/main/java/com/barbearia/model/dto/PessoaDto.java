@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AlteracaoPessoaDto {
-	// Contém informações novas de clientes e prestadores
+public class PessoaDto {
 	private String cpf;
 	private String nome;
+	private String codigoPostal;
+	private String complemento;
+	private String origem;
 }

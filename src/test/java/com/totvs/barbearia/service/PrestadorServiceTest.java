@@ -13,7 +13,7 @@ import com.barbearia.BarbeariaApiApplication;
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.dto.AlteracaoPessoaDto;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.ClienteService;
 import com.barbearia.service.PrestadorService;
 import com.barbearia.service.factory.IEndereco;
@@ -44,7 +44,7 @@ public class PrestadorServiceTest {
   @Test
   public void adicionar_falhaCodigoPostalNulo() {
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
-      prestadorService.adicionar(new NovaPessoaDto());
+      prestadorService.adicionar(new PessoaDto());
     });
 
     assertEquals(exception.getMessage(), MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
@@ -52,7 +52,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaComplementoNulo() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
 
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
@@ -64,7 +64,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaOrigemNulo() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
 
@@ -77,7 +77,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaCpfNulo() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -91,7 +91,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaNomeNulo() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -106,7 +106,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaClienteComMesmoCpf() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -124,7 +124,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_falhaPrestadorJaExiste() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -142,7 +142,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void adicionar_sucessoSalvarPrestador() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -167,7 +167,7 @@ public class PrestadorServiceTest {
 
   @Test
   public void detalhar_sucesso() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -228,7 +228,7 @@ public class PrestadorServiceTest {
     pessoaDto.setCpfNovo("61723146536");
     pessoaDto.setNomeNovo("Dummy");
     
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
@@ -265,7 +265,7 @@ public class PrestadorServiceTest {
     pessoaDto.setNomeNovo("Poste");
     pessoaDto.setCpfNovo("32264088877");
     
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");

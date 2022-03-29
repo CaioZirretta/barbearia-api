@@ -1,10 +1,6 @@
 package com.barbearia.service.utils;
 
 import com.barbearia.enums.Paises;
-import com.barbearia.model.dto.EnderecoDto;
-import com.barbearia.model.dto.NovaPessoaDto;
-import com.barbearia.service.factory.EnderecoFactory;
-import com.barbearia.service.factory.IEndereco;
 
 public class EnderecoUtils {
 

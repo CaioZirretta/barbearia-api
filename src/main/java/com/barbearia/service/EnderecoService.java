@@ -1,13 +1,13 @@
 package com.barbearia.service;
 
 import com.barbearia.model.dto.EnderecoDto;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.factory.EnderecoFactory;
 import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.EnderecoUtils;
 
 public class EnderecoService {
-	public static EnderecoDto montarEndereco(NovaPessoaDto novaPessoaDto) {
+	public static EnderecoDto montarEndereco(PessoaDto novaPessoaDto) {
 		IEndereco endereco = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
 		EnderecoDto enderecoDto = endereco.requestEndereco(novaPessoaDto.getCodigoPostal());
 

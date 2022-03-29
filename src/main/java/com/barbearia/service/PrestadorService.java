@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Prestador;
-import com.barbearia.model.dto.AlteracaoPessoaDto;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.utils.EnderecoUtils;
@@ -30,7 +29,7 @@ public class PrestadorService {
     return prestadorRepository.findAll();
   }
 
-  public Prestador adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
+  public Prestador adicionar(PessoaDto novaPessoaDto) throws ApiRequestException {
     if (!EnderecoUtils.validaCodigoPostal(novaPessoaDto.getCodigoPostal()))
       throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
 
@@ -64,7 +63,7 @@ public class PrestadorService {
     return prestadorRepository.findByCpf(cpf);
   }
 
-  public Prestador alterarCpfNomePrestador(String cpf, AlteracaoPessoaDto pessoaDto) {
+  public Prestador alterarPrestador(String cpf, PessoaDto pessoaDto) {
     if (!PessoaUtils.validaCpf(cpf))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
     
@@ -80,10 +79,24 @@ public class PrestadorService {
     if (verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
       throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
     
+    if (pessoaDto.getCodigoPostal() != null) {
+      if (!EnderecoUtils.validaCodigoPostal(pessoaDto.getCodigoPostal()))
+        throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
+      
+      if (!EnderecoUtils.validaComplemento(pessoaDto.getComplemento()))
+        throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
+      
+      if (!EnderecoUtils.validaOrigem(pessoaDto.getOrigem()))
+        throw new ApiRequestException(MensagensPessoas.ORIGEM_INVALIDA.getMensagem());
+    }
+    
     Prestador prestador = prestadorRepository.findByCpf(cpf);
 
     prestador.setCpf(pessoaDto.getCpf());
     prestador.setNome(pessoaDto.getNome());
+    
+    if (pessoaDto.getCodigoPostal() != null)
+      prestador.setEndereco(EnderecoService.montarEndereco(pessoaDto));
 
     return prestador;
   }

@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Cliente;
-import com.barbearia.model.dto.AlteracaoPessoaDto;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.repository.PrestadorRepository;
 import com.barbearia.service.utils.EnderecoUtils;
@@ -30,7 +29,7 @@ public class ClienteService {
     return clienteRepository.findAll();
   }
 
-  public Cliente adicionar(NovaPessoaDto novaPessoaDto) throws ApiRequestException {
+  public Cliente adicionar(PessoaDto novaPessoaDto) throws ApiRequestException {
 
     if (!EnderecoUtils.validaCodigoPostal(novaPessoaDto.getCodigoPostal()))
       throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
@@ -65,27 +64,41 @@ public class ClienteService {
     return clienteRepository.findByCpf(cpf);
   }
 
-  public Cliente alterarCpfNomeCliente(String cpf, AlteracaoPessoaDto pessoaDto) {
+  public Cliente alterarCliente(String cpf, PessoaDto pessoaDto) {
 
     if (!PessoaUtils.validaCpf(cpf))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
-    
+
     if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_NOVO_INVALIDO.getMensagem());
-    
+
     if (!PessoaUtils.validaNome(pessoaDto.getNome()))
       throw new ApiRequestException(MensagensPessoas.NOME_INVALIDO.getMensagem());
-    
+
     if (verificaSePrestadorExiste(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
-    
+
     if (!verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
+
+    if (pessoaDto.getCodigoPostal() != null) {
+      if (!EnderecoUtils.validaCodigoPostal(pessoaDto.getCodigoPostal()))
+        throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
+      
+      if (!EnderecoUtils.validaComplemento(pessoaDto.getComplemento()))
+        throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
+      
+      if (!EnderecoUtils.validaOrigem(pessoaDto.getOrigem()))
+        throw new ApiRequestException(MensagensPessoas.ORIGEM_INVALIDA.getMensagem());
+    }
     
     Cliente cliente = clienteRepository.findByCpf(pessoaDto.getCpf());
 
     cliente.setCpf(pessoaDto.getCpf());
     cliente.setNome(pessoaDto.getNome());
+    
+    if (pessoaDto.getCodigoPostal() != null)
+      cliente.setEndereco(EnderecoService.montarEndereco(pessoaDto));
 
     return cliente;
   }

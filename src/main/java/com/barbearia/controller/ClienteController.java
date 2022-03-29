@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.model.Cliente;
-import com.barbearia.model.dto.AlteracaoPessoaDto;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.ClienteService;
 
 @RestController
@@ -39,16 +39,16 @@ public class ClienteController {
   }
 
   @PostMapping
-  public ResponseEntity<Cliente> adicionar(@RequestBody NovaPessoaDto novaPessoaDto) {
-    return new ResponseEntity<Cliente>(clienteService.adicionar(novaPessoaDto), HttpStatus.CREATED);
+  public ResponseEntity<Cliente> adicionar(@RequestBody PessoaDto pessoaDto) {
+    return new ResponseEntity<Cliente>(clienteService.adicionar(pessoaDto), HttpStatus.CREATED);
   }
 
-  @PutMapping("/{cpf}")
+  @PutMapping
   @Transactional
   public ResponseEntity<Cliente> alterarCliente(
-      @PathVariable String cpf,
-      @RequestBody AlteracaoPessoaDto pessoaDto) {
-    return new ResponseEntity<Cliente>(clienteService.alterarCpfNomeCliente(cpf, pessoaDto),
+      @RequestParam String cpf,
+      @RequestBody PessoaDto pessoaDto) {
+    return new ResponseEntity<Cliente>(clienteService.alterarCliente(cpf, pessoaDto),
       HttpStatus.OK);
   }
 

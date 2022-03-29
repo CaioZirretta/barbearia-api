@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.barbearia.BarbeariaApiApplication;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.EnderecoService;
 import com.barbearia.service.factory.IEndereco;
 
@@ -18,7 +18,7 @@ public class EnderecoServiceTest {
 
   @Test
   public void sucesso_enderecoBr() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setOrigem("BR");
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("");
@@ -28,7 +28,7 @@ public class EnderecoServiceTest {
 
   @Test
   public void sucesso_enderecoCa() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setOrigem("CA");
     novaPessoaDto.setCodigoPostal("M5H2N2");
     novaPessoaDto.setComplemento("");
@@ -38,7 +38,7 @@ public class EnderecoServiceTest {
 
   @Test
   public void falha_instanciaNula() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setOrigem("");
     novaPessoaDto.setCodigoPostal("M5H2N2");
     novaPessoaDto.setComplemento("");

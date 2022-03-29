@@ -17,7 +17,7 @@ import com.barbearia.enums.MensagensAgendamento;
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.Agendamento;
-import com.barbearia.model.dto.NovaPessoaDto;
+import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.repository.ClienteRepository;
 import com.barbearia.service.AgendamentoService;
 import com.barbearia.service.ClienteService;
@@ -77,7 +77,7 @@ public class AgendamentoServiceTest {
 
   @Test
   public void listarHorarioVagoDiaPrestador_sucesso() {
-    NovaPessoaDto novaPessoaDto = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDto = dummyNovaPessoaDto();
     novaPessoaDto.setCpf("56521617796");
     
     prestadorService.adicionar(novaPessoaDto);
@@ -111,7 +111,7 @@ public class AgendamentoServiceTest {
 
   @Test
   public void procurarPorCpfCliente_sucesso() {
-    NovaPessoaDto novaPessoaDto = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDto = dummyNovaPessoaDto();
     novaPessoaDto.setCpf("32583911902");
     
     clienteService.adicionar(novaPessoaDto);
@@ -145,7 +145,7 @@ public class AgendamentoServiceTest {
 
   @Test
   public void procurarPorCpfPrestador_sucesso() {
-    NovaPessoaDto novaPessoaDto = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDto = dummyNovaPessoaDto();
     novaPessoaDto.setCpf("70050701274");
     
     prestadorService.adicionar(novaPessoaDto);
@@ -159,12 +159,12 @@ public class AgendamentoServiceTest {
 
   @Test
   public void cancelarAgendamento_falhaAgendamentoInexistente() {
-    NovaPessoaDto novaPessoaDtoCliente = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDtoCliente = dummyNovaPessoaDto();
     novaPessoaDtoCliente.setCpf("18042610505");
     
     clienteService.adicionar(novaPessoaDtoCliente);
     
-    NovaPessoaDto novaPessoaDtoPrestador = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDtoPrestador = dummyNovaPessoaDto();
     novaPessoaDtoPrestador.setCpf("42623273618");
     
     Agendamento agendamento = dummyAgendamento();
@@ -183,12 +183,12 @@ public class AgendamentoServiceTest {
 
   @Test
   public void cancelarAgendamento_sucesso() {
-    NovaPessoaDto novaPessoaDtoCliente = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDtoCliente = dummyNovaPessoaDto();
     novaPessoaDtoCliente.setCpf("47465556805");
     
     clienteService.adicionar(novaPessoaDtoCliente);
     
-    NovaPessoaDto novaPessoaDtoPrestador = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDtoPrestador = dummyNovaPessoaDto();
     novaPessoaDtoPrestador.setCpf("54742636600");
     
     prestadorService.adicionar(novaPessoaDtoPrestador);
@@ -253,7 +253,7 @@ public class AgendamentoServiceTest {
     agendamento.setCpfCliente("52653452480");
     agendamento.setCpfPrestador("82677010526");
     
-    NovaPessoaDto novaPessoaDto = dummyNovaPessoaDto();
+    PessoaDto novaPessoaDto = dummyNovaPessoaDto();
     novaPessoaDto.setCpf("14172471269");
     
     clienteService.adicionar(novaPessoaDto);
@@ -266,8 +266,8 @@ public class AgendamentoServiceTest {
       .getMensagem()));
   }
   
-  private NovaPessoaDto dummyNovaPessoaDto() {
-    NovaPessoaDto novaPessoaDto = new NovaPessoaDto();
+  private PessoaDto dummyNovaPessoaDto() {
+    PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
     novaPessoaDto.setComplemento("complemento");
     novaPessoaDto.setOrigem("BR");
