@@ -17,7 +17,7 @@ public interface PrestadorRepository extends CrudRepository<Prestador, String> {
 
 	public Prestador findByCpf(String cpf);
 
-	@Query("SELECT p FROM Prestador p WHERE p.endereco.cep = :codigoPostal  OR p.endereco.postal = :codigoPostal ORDER BY p.cpf")
+	@Query("SELECT p FROM Prestador p WHERE p.endereco.cep = :codigoPostal ORDER BY p.cpf")
 	public List<Prestador> findAllByPostal(String codigoPostal);
 	
 	@Transactional

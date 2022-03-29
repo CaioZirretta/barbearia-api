@@ -7,8 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.barbearia.model.dto.EnderecoDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +26,6 @@ public class Prestador {
 	
 	@Embedded
 	@NotNull
-	private EnderecoDto endereco;
+	private Endereco endereco;
 
 }

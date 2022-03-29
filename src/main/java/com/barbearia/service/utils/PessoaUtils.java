@@ -7,12 +7,12 @@ import javax.annotation.ManagedBean;
 @ManagedBean
 public class PessoaUtils {
 
-  public static String formataCpf(String cpf) {
+  public static String formataString(String cpf) {
     return cpf.trim().replace("-", "").replace("/", "").replace(".", "");
   }
 
   public static boolean validaCpf(String cpf) {
-    cpf = formataCpf(cpf);
+    cpf = formataString(cpf);
     if (cpf == null || cpf.isEmpty() || cpf.isBlank())
       return false;
     

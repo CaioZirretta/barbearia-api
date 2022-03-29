@@ -51,8 +51,9 @@ public class PrestadorService {
     if (verificaSePrestadorExiste(novaPessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.PRESTADOR_JA_EXISTE.getMensagem());
 
-    return prestadorRepository.save(new Prestador(PessoaUtils.formataCpf(novaPessoaDto.getCpf()),
-      novaPessoaDto.getNome(), 
+    return prestadorRepository.save(new Prestador(
+      PessoaUtils.formataString(novaPessoaDto.getCpf()),
+      novaPessoaDto.getNome(),
       EnderecoService.montarEndereco(novaPessoaDto)));
   }
 
@@ -66,35 +67,35 @@ public class PrestadorService {
   public Prestador alterarPrestador(String cpf, PessoaDto pessoaDto) {
     if (!PessoaUtils.validaCpf(cpf))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
-    
+
     if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_NOVO_INVALIDO.getMensagem());
-    
+
     if (!PessoaUtils.validaNome(pessoaDto.getNome()))
       throw new ApiRequestException(MensagensPessoas.NOME_INVALIDO.getMensagem());
-    
+
     if (!verificaSePrestadorExiste(cpf))
       throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
-    
-    if (verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
+
+    if (verificaSeClienteExiste(PessoaUtils.formataString(cpf)))
       throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
-    
+
     if (pessoaDto.getCodigoPostal() != null) {
       if (!EnderecoUtils.validaCodigoPostal(pessoaDto.getCodigoPostal()))
         throw new ApiRequestException(MensagensPessoas.CODIGO_POSTAL_INVALIDO.getMensagem());
-      
+
       if (!EnderecoUtils.validaComplemento(pessoaDto.getComplemento()))
         throw new ApiRequestException(MensagensPessoas.COMPLEMENTO_GRANDE.getMensagem());
-      
+
       if (!EnderecoUtils.validaOrigem(pessoaDto.getOrigem()))
         throw new ApiRequestException(MensagensPessoas.ORIGEM_INVALIDA.getMensagem());
     }
-    
+
     Prestador prestador = prestadorRepository.findByCpf(cpf);
 
     prestador.setCpf(pessoaDto.getCpf());
     prestador.setNome(pessoaDto.getNome());
-    
+
     if (pessoaDto.getCodigoPostal() != null)
       prestador.setEndereco(EnderecoService.montarEndereco(pessoaDto));
 
@@ -104,15 +105,15 @@ public class PrestadorService {
   public List<Prestador> listarTodosPorCodigoPostal(String codigoPostal) {
     return prestadorRepository.findAllByPostal(codigoPostal);
   }
-  
+
   public void apagarPrestador(String cpf) {
     if (!PessoaUtils.validaCpf(cpf))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
-    
-    if (!verificaSePrestadorExiste(PessoaUtils.formataCpf(cpf)))
+
+    if (!verificaSePrestadorExiste(PessoaUtils.formataString(cpf)))
       throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
-    
-    prestadorRepository.deleteByCpf(cpf);  
+
+    prestadorRepository.deleteByCpf(cpf);
   }
 
   // Validações de repositório

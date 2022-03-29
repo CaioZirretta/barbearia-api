@@ -52,7 +52,8 @@ public class ClienteService {
     if (verificaSeClienteExiste(novaPessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_JA_EXISTE.getMensagem());
 
-    return clienteRepository.save(new Cliente(PessoaUtils.formataCpf(novaPessoaDto.getCpf()),
+    return clienteRepository.save(new Cliente(
+      PessoaUtils.formataString(novaPessoaDto.getCpf()),
       novaPessoaDto.getNome(),
       EnderecoService.montarEndereco(novaPessoaDto)));
   }
@@ -78,7 +79,7 @@ public class ClienteService {
     if (verificaSePrestadorExiste(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
 
-    if (!verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
+    if (!verificaSeClienteExiste(PessoaUtils.formataString(cpf)))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
 
     if (pessoaDto.getCodigoPostal() != null) {
@@ -108,7 +109,7 @@ public class ClienteService {
     if (!PessoaUtils.validaCpf(cpf))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
     
-    if (!verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
+    if (!verificaSeClienteExiste(PessoaUtils.formataString(cpf)))
       throw new ApiRequestException(MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
     
     clienteRepository.deleteByCpf(cpf);    
