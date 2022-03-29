@@ -64,26 +64,26 @@ public class PrestadorService {
     return prestadorRepository.findByCpf(cpf);
   }
 
-  public Prestador alterarPrestador(AlteracaoPessoaDto pessoaDto) {
-    if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
+  public Prestador alterarCpfNomePrestador(String cpf, AlteracaoPessoaDto pessoaDto) {
+    if (!PessoaUtils.validaCpf(cpf))
       throw new ApiRequestException(MensagensPessoas.CPF_INVALIDO.getMensagem());
     
-    if (!PessoaUtils.validaCpf(pessoaDto.getCpfNovo()))
+    if (!PessoaUtils.validaCpf(pessoaDto.getCpf()))
       throw new ApiRequestException(MensagensPessoas.CPF_NOVO_INVALIDO.getMensagem());
-
-    if (!PessoaUtils.validaNome(pessoaDto.getNomeNovo()))
+    
+    if (!PessoaUtils.validaNome(pessoaDto.getNome()))
       throw new ApiRequestException(MensagensPessoas.NOME_INVALIDO.getMensagem());
     
-    if (verificaSeClienteExiste(PessoaUtils.formataCpf(pessoaDto.getCpf())))
-      throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
-    
-    if (!verificaSePrestadorExiste(pessoaDto.getCpf()))
+    if (!verificaSePrestadorExiste(cpf))
       throw new ApiRequestException(MensagensPessoas.PRESTADOR_NAO_EXISTE.getMensagem());
     
-    Prestador prestador = prestadorRepository.findByCpf(pessoaDto.getCpf());
+    if (verificaSeClienteExiste(PessoaUtils.formataCpf(cpf)))
+      throw new ApiRequestException(MensagensPessoas.CPF_DE_CLIENTE.getMensagem());
+    
+    Prestador prestador = prestadorRepository.findByCpf(cpf);
 
-    prestador.setCpf(pessoaDto.getCpfNovo());
-    prestador.setNome(pessoaDto.getNomeNovo());
+    prestador.setCpf(pessoaDto.getCpf());
+    prestador.setNome(pessoaDto.getNome());
 
     return prestador;
   }

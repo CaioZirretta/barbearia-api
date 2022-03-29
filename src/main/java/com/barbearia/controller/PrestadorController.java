@@ -27,7 +27,7 @@ public class PrestadorController {
 	@Autowired
 	private PrestadorService prestadorService;
 	
-	@GetMapping("/listar/todos")
+	@GetMapping
 	public ResponseEntity<List<Prestador>> listarTodos(){
 		return new ResponseEntity<List<Prestador>>(prestadorService.listarTodos(), HttpStatus.OK); 
 	}
@@ -42,15 +42,15 @@ public class PrestadorController {
     return new ResponseEntity<List<Prestador>>(prestadorService.listarTodosPorCodigoPostal(codigoPostal), HttpStatus.OK);
   }
 	
-	@PostMapping("/adicionar")
+	@PostMapping
 	public ResponseEntity<Prestador> adicionar(@RequestBody NovaPessoaDto novaPessoaDto)  {
 		return new ResponseEntity<Prestador>(prestadorService.adicionar(novaPessoaDto), HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/alterar")
+	@PutMapping("/{cpf}")
 	@Transactional
-	public ResponseEntity<Prestador> alterarCliente(@RequestBody AlteracaoPessoaDto pessoaDto) {
-		return new ResponseEntity<Prestador>(prestadorService.alterarPrestador(pessoaDto), HttpStatus.OK);
+	public ResponseEntity<Prestador> alterarCliente(@PathVariable String cpf, @RequestBody AlteracaoPessoaDto pessoaDto) {
+		return new ResponseEntity<Prestador>(prestadorService.alterarCpfNomePrestador(cpf, pessoaDto), HttpStatus.OK);
 	}
 
 }

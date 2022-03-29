@@ -12,6 +12,7 @@ public class PessoaUtils {
   }
 
   public static boolean validaCpf(String cpf) {
+    cpf = formataCpf(cpf);
     if (cpf == null || cpf.isEmpty() || cpf.isBlank())
       return false;
     
