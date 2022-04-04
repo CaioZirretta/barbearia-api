@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import com.barbearia.BarbeariaApiApplication;
 import com.barbearia.enums.MensagensPessoas;
 import com.barbearia.exception.ApiRequestException;
-import com.barbearia.model.dto.AlteracaoPessoaDto;
 import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.ClienteService;
 import com.barbearia.service.PrestadorService;
@@ -182,13 +181,14 @@ public class ClienteServiceTest {
   }
 
   // Alterar
+  // Valores de CPF errados, avaliar caso a caso 
 
   @Test
   public void alterar_falhaCpfInvalido() {
-    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    PessoaDto pessoaDto = new PessoaDto();
     pessoaDto.setCpf("123");
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
-      clienteService.alterarCliente(pessoaDto);
+      clienteService.alterarCliente("123", pessoaDto);
     });
     
     assertEquals(exception.getMessage(), MensagensPessoas.CPF_INVALIDO.getMensagem());
@@ -196,12 +196,11 @@ public class ClienteServiceTest {
 
   @Test
   public void alterar_falhaCpfNovoInvalido() {
-    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    PessoaDto pessoaDto = new PessoaDto();
     pessoaDto.setCpf("43176353723");
-    pessoaDto.setCpfNovo("123");
     
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
-      clienteService.alterarCliente(pessoaDto);
+      clienteService.alterarCliente("43176353723", pessoaDto);
     });
     
     assertEquals(exception.getMessage(), MensagensPessoas.CPF_NOVO_INVALIDO.getMensagem());
@@ -209,13 +208,12 @@ public class ClienteServiceTest {
   
   @Test
   public void alterar_falhaNomeInvalido() {
-    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    PessoaDto pessoaDto = new PessoaDto();
     pessoaDto.setCpf("43176353723");
-    pessoaDto.setCpfNovo("43176353723");
-    pessoaDto.setNomeNovo(null);
+    pessoaDto.setNome(null);
     
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
-      clienteService.alterarCliente(pessoaDto);
+      clienteService.alterarCliente("43176353723" ,pessoaDto);
     });
     
     assertEquals(exception.getMessage(), MensagensPessoas.NOME_INVALIDO.getMensagem());
@@ -223,10 +221,9 @@ public class ClienteServiceTest {
 
   @Test
   public void alterar_falhaCpfDePrestador() {
-    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    PessoaDto pessoaDto = new PessoaDto();
     pessoaDto.setCpf("36360825902");
-    pessoaDto.setCpfNovo("75440767509");
-    pessoaDto.setNomeNovo("Dummy");
+    pessoaDto.setNome("Dummy");
     
     PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
@@ -238,7 +235,7 @@ public class ClienteServiceTest {
     prestadorService.adicionar(novaPessoaDto);
     
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
-      clienteService.alterarCliente(pessoaDto);
+      clienteService.alterarCliente("36360825902", pessoaDto);
     });
     
     assertEquals(exception.getMessage(), MensagensPessoas.CPF_DE_PRESTADOR.getMensagem());
@@ -246,13 +243,12 @@ public class ClienteServiceTest {
   
   @Test
   public void alterar_falhaClienteNaoEncontrado() {
-    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    PessoaDto pessoaDto = new PessoaDto();
     pessoaDto.setCpf("87586421889");
-    pessoaDto.setCpfNovo("63525332300");
-    pessoaDto.setNomeNovo("Dummy");
+    pessoaDto.setNome("Dummy");
     
     ApiRequestException exception = assertThrows(ApiRequestException.class, () -> {
-      clienteService.alterarCliente(pessoaDto);
+      clienteService.alterarCliente("87586421889", pessoaDto);
     });
     
     assertEquals(exception.getMessage(), MensagensPessoas.CLIENTE_NAO_EXISTE.getMensagem());
@@ -260,10 +256,9 @@ public class ClienteServiceTest {
 
   @Test
   public void alterar_sucesso() {
-    AlteracaoPessoaDto pessoaDto = new AlteracaoPessoaDto();
+    PessoaDto pessoaDto = new PessoaDto();
     pessoaDto.setCpf("49176835642");
-    pessoaDto.setNomeNovo("Poste");
-    pessoaDto.setCpfNovo("82571871781");
+    pessoaDto.setNome("Poste");
     
     PessoaDto novaPessoaDto = new PessoaDto();
     novaPessoaDto.setCodigoPostal("74815435");
@@ -275,7 +270,7 @@ public class ClienteServiceTest {
     clienteService.adicionar(novaPessoaDto);
 
     Assertions.assertAll(() -> {
-      clienteService.alterarCliente(pessoaDto);
+      clienteService.alterarCliente("49176835642", pessoaDto);
     });
   }
 }

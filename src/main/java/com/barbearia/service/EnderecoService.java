@@ -1,5 +1,7 @@
 package com.barbearia.service;
 
+import org.springframework.stereotype.Service;
+
 import com.barbearia.model.Endereco;
 import com.barbearia.model.EnderecoBR;
 import com.barbearia.model.EnderecoCA;
@@ -10,7 +12,9 @@ import com.barbearia.service.factory.IEndereco;
 import com.barbearia.service.utils.EnderecoUtils;
 import com.barbearia.service.utils.PessoaUtils;
 
+@Service
 public class EnderecoService {
+
   public static Endereco montarEndereco(PessoaDto novaPessoaDto) {
     IEndereco enderecoInstancia = EnderecoFactory.enderecoFactory(novaPessoaDto.getOrigem());
     EnderecoDto enderecoDto = enderecoInstancia.requestEndereco(PessoaUtils.formataString(
@@ -30,7 +34,7 @@ public class EnderecoService {
 
   private static Endereco montarEnderecoCa(EnderecoDto enderecoDto) {
     Endereco endereco = new Endereco();
-    
+
     endereco.setBairro(null);
     endereco.setCep(enderecoDto.getPostal());
     endereco.setComplemento(enderecoDto.getComplemento());
@@ -38,13 +42,13 @@ public class EnderecoService {
     endereco.setLogradouro(null);
     endereco.setPais(enderecoDto.getCountry());
     endereco.setUf(enderecoDto.getStandard().getProv());
-    
+
     return endereco;
   }
 
   public static Endereco montarEnderecoBr(EnderecoDto enderecoDto) {
     Endereco endereco = new Endereco();
-    
+
     endereco.setBairro(enderecoDto.getBairro());
     endereco.setCep(enderecoDto.getCep());
     endereco.setComplemento(enderecoDto.getComplemento());
@@ -52,7 +56,7 @@ public class EnderecoService {
     endereco.setLogradouro(enderecoDto.getLogradouro());
     endereco.setPais(enderecoDto.getCountry());
     endereco.setUf(enderecoDto.getUf());
-    
+
     return endereco;
   }
 }
