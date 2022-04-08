@@ -1,4 +1,4 @@
-package com.barbearia.application;
+package com.barbearia.application.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -11,21 +11,18 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+@Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Configuration
-  public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-    
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      http
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
       .authorizeHttpRequests(authorize -> authorize
         .anyRequest().authenticated())
       .formLogin(withDefaults());
-    }
   }
-  
+
   @Bean
   public UserDetailsService userDetailsService() {
     InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
