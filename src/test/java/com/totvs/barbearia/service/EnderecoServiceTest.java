@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import com.barbearia.BarbeariaApiApplication;
+import com.barbearia.application.BarbeariaApiApplication;
 import com.barbearia.model.dto.PessoaDto;
 import com.barbearia.service.EnderecoService;
 import com.barbearia.service.factory.IEndereco;

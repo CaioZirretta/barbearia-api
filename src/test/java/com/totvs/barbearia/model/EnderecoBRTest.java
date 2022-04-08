@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.barbearia.BarbeariaApiApplication;
+import com.barbearia.application.BarbeariaApiApplication;
 import com.barbearia.exception.ApiRequestException;
 import com.barbearia.model.EnderecoBR;
 

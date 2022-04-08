@@ -13,7 +13,7 @@ public class PessoaUtils {
 
   public static boolean validaCpf(String cpf) {
     cpf = formataString(cpf);
-    if (cpf == null || cpf.isEmpty() || cpf.isBlank())
+    if (cpf == null || cpf.isEmpty())
       return false;
     
     if (cpf.equals("00000000000") || cpf.equals("11111111111") || cpf.equals("22222222222")
@@ -64,7 +64,7 @@ public class PessoaUtils {
   }
 
   public static boolean validaNome(String nome) {
-    if (nome == null || nome.isEmpty() || nome.isBlank() || nome.matches(
+    if (nome == null || nome.isEmpty() || nome.matches(
       RegexUtils.digitoNumericoRegex))
       return false;
     return true;

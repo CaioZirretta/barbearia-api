@@ -1,4 +1,4 @@
-package com.barbearia;
+package com.barbearia.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
