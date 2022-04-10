@@ -13,9 +13,10 @@ target/
 .springBeans
 .sts4-cache
 
-/dbeaver
-/mvn
-/settings
+/.dbeaver
+/.mvn
+/.settings
+/Diagrams
 
 /readme.md
 Scripts/Script.sql
@@ -26,3 +27,5 @@ Scripts/Script.sql
 Scripts/Script.sql
 *.bak
 *.json
+
+
