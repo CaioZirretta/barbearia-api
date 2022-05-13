@@ -28,13 +28,13 @@ public class PrestadorController {
   @Autowired
   private PrestadorService prestadorService;
 
-  @GetMapping
+  @GetMapping("/todos")
   public ResponseEntity<List<Prestador>> listarTodos() {
     return new ResponseEntity<List<Prestador>>(prestadorService.listarTodos(), HttpStatus.OK);
   }
 
-  @GetMapping("/{cpf}")
-  public ResponseEntity<Prestador> detalhar(@PathVariable String cpf) {
+  @GetMapping
+  public ResponseEntity<Prestador> detalharPrestador(@RequestParam String cpf) {
     return new ResponseEntity<Prestador>(prestadorService.detalharPrestador(cpf), HttpStatus.OK);
   }
 
